@@ -1,0 +1,759 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dhiman Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: phone-first app shell — sticky header, one scrolling column, fixed bottom tab bar, bottom sheets for forms */
+:root{
+  --bg:#EEF3F0; --surface:#FFFFFF; --sunk:#E3EAE6; --ink:#13201B; --muted:#5A6A63; --line:#D5DFDA;
+  --accent:#0E6A55; --accent-ink:#FFFFFF; --get:#127A4E; --owe:#B3412D; --warn:#A8690F;
+  --get-bg:#DDF0E5; --owe-bg:#F7E1DC; --warn-bg:#F6EBD5;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1412; --surface:#16201C; --sunk:#1D2925; --ink:#E4EDE8; --muted:#92A39B; --line:#28362F;
+  --accent:#49BE9C; --accent-ink:#06120E; --get:#4FC48D; --owe:#EF7C64; --warn:#E2AC4D;
+  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1412; --surface:#16201C; --sunk:#1D2925; --ink:#E4EDE8; --muted:#92A39B; --line:#28362F;
+  --accent:#49BE9C; --accent-ink:#06120E; --get:#4FC48D; --owe:#EF7C64; --warn:#E2AC4D;
+  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);padding-inline:16px;padding-block:0 96px;font-variant-numeric:tabular-nums}
+.wrap{max-width:640px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+header.top h1{font-size:20px}
+header.top .nw{text-align:right;font-size:12px;color:var(--muted)}
+header.top .nw b{display:block;font-family:var(--display);font-size:18px;color:var(--ink)}
+.save-warn{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+section{display:grid;gap:12px;margin-bottom:22px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec-h h2{font-size:17px}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left}
+.row:first-child{border-top:0}
+button.row:hover{background:var(--sunk)}
+.row .main{flex:1;min-width:0}
+.row .main .t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .main .s{font-size:12.5px;color:var(--muted)}
+.row .amt{font-weight:600;text-align:right;white-space:nowrap}
+.rowbtn{background:none;border:0;padding:0;text-align:left;color:inherit}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.quick .btn{padding:9px 4px}
+.lock{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;align-items:center;justify-content:center;padding-inline:16px;text-align:center}
+.lock h2{font-size:22px}.dots{display:flex;gap:14px;justify-content:center;margin-top:14px}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--accent)}.dots i.on{background:var(--accent)}
+.pad{display:grid;grid-template-columns:repeat(3,66px);gap:12px;justify-content:center;margin:20px 0}.pad button{height:66px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:22px;font-weight:600}
+.shake{animation:sh .3s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.bills{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.pos{color:var(--get)} .neg{color:var(--owe)} .mut{color:var(--muted)}
+.hero{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:18px 16px 12px}
+.hero .big{font-family:var(--display);font-size:34px;line-height:1.1}
+.hero .sub{opacity:.85;font-size:13px}
+.hero svg{display:block;width:100%;height:56px;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px}
+.stat b{display:block;font-family:var(--display);font-size:17px;margin-top:2px}
+.pill{display:inline-block;font-size:11.5px;font-weight:600;border-radius:99px;padding:2px 8px;white-space:nowrap}
+.pill.ok{background:var(--get-bg);color:var(--get)} .pill.bad{background:var(--owe-bg);color:var(--owe)} .pill.soon{background:var(--warn-bg);color:var(--warn)} .pill.n{background:var(--sunk);color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-weight:600;font-size:13.5px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.dan{color:var(--owe)}
+.btn.sm{padding:5px 9px;font-size:12.5px;border-radius:8px}
+.btn.wide{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.bar{height:5px;border-radius:9px;background:var(--sunk);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--get)}
+.seg{display:flex;background:var(--sunk);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;border-radius:8px;padding:7px;font-weight:600;font-size:13.5px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+input.search{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px}
+.house-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.house-h h3{font-size:17px}
+.house-h .s{font-size:12.5px;color:var(--muted)}
+.landlord{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--sunk);border-radius:10px;padding:10px 12px;margin-top:10px;flex-wrap:wrap}
+.tenants{margin-top:10px;border-top:1px solid var(--line)}
+.tenants .row{padding-inline:0}
+.monthnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.monthnav b{font-family:var(--display);font-size:17px}
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th,.ptable td{padding:7px 4px;text-align:right;border-top:1px solid var(--line)}
+.ptable th:first-child,.ptable td:first-child{text-align:left}
+.ptable thead th{border-top:0;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.ptable tfoot td{font-weight:700}
+.tablewrap{overflow-x:auto}
+.msg{background:var(--sunk);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:8px 0;white-space:pre-wrap}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{flex:1;border:0;background:none;padding:9px 2px 10px;font-size:11.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+nav.tabs button.on{color:var(--accent)}
+nav.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs .badge{position:absolute;top:4px;left:calc(50% + 6px);background:var(--owe);color:#fff;border-radius:99px;font-size:10px;min-width:16px;height:16px;line-height:16px;padding:0 4px}
+.scrim{position:fixed;inset:0;background:rgba(5,12,10,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet h2{font-size:19px;margin-bottom:4px}
+.sheet .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+form.f{display:grid;gap:12px}
+.f label{display:grid;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.f input,.f select,.f textarea{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font-weight:500;font-size:15px;width:100%;min-width:0}
+.f .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.f .chips label{display:block}
+.f .fld{display:grid;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.vh{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13.5px;color:var(--ink);font-weight:600;background:var(--bg)}
+.chips input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chips input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13.5px;z-index:30;max-width:90vw}
+.empty{color:var(--muted);font-size:13.5px;padding:14px;text-align:center}
+textarea.bk{width:100%;height:120px;font-family:ui-monospace,monospace;font-size:11px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
+</style>
+
+<div class="wrap">
+  <header class="top"><h1 id="ttl">Home</h1><div class="nw">Net worth<b id="hnw">$0</b></div></header>
+  <div id="warn"></div>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs"></nav>
+<div id="sheet"></div>
+<div id="toast"></div>
+<div id="lock"></div>
+
+<script>
+const SEED = {"entries":[{"id":"shammo","name":"Mrinmoy Chanda Shammo","side":"get","amount":11705,"payments":[],"note":"10,655 + 1,050","added":"2026-10-05"},{"id":"robin","name":"Robin Hussain","side":"get","amount":10700,"payments":[],"added":"2026-10-05"},{"id":"nirupam","name":"Nirupom Das","side":"get","amount":10490,"note":"2,050 + 7,300 + 1,000 + 70 + 70","payments":[{"amt":800,"iso":"2026-10-07"},{"amt":1780,"iso":"2026-10-11"}],"added":"2026-10-05"},{"id":"ayman","name":"Ayman Barua Akaash","side":"get","amount":9000,"note":"8,000 + 1,000","payments":[],"added":"2026-10-05"},{"id":"srabon","name":"Anup Sutradhar Srabon","side":"get","amount":4562,"payments":[],"added":"2026-10-05","note":"4,250 + 312"},{"id":"himel","name":"Priyang","side":"get","amount":4400,"payments":[],"added":"2026-10-05"},{"id":"sadman","name":"Sadman Iqbal Nafi","side":"get","amount":3615,"payments":[{"amt":500,"iso":"2026-10-08"}],"added":"2026-10-05"},{"id":"angkon","name":"Angkon Karmakar","side":"get","amount":3000,"payments":[],"added":"2026-10-05"},{"id":"ifti","name":"Iftikar Rob Chowdhury","side":"get","amount":2300,"payments":[],"added":"2026-10-05"},{"id":"apurba-barua","name":"Apurba Barua","side":"get","amount":8650,"payments":[],"added":"2026-10-05","note":"1,950 + 1,000 + 5,700"},{"id":"ontor","name":"Mahbub Rahman Ontor","side":"get","amount":1000,"payments":[{"amt":1000,"iso":"2026-10-07"}],"added":"2026-10-05"},{"id":"joy","name":"Jonmajoy Kumar Das","side":"get","amount":500,"payments":[],"added":"2026-10-05"},{"id":"proma","name":"Urmila Das Proma","side":"owe","amount":7500,"payments":[],"added":"2026-10-05"},{"id":"apurba-deb","name":"Apurba Deb","side":"owe","amount":6000,"payments":[],"added":"2026-10-05","note":"5,000 + 1,000"},{"id":"jagjit-sangha-muzf4tnx","name":"Jagjit Sangha","side":"get","amount":4764,"added":"2026-09-14","payments":[{"amt":1191,"iso":"2026-10-09"}]}],"assets":[{"id":"commsec","name":"CommSec shares","amount":25300},{"id":"commbank","name":"CommBank","amount":200,"updated":"2026-10-11"},{"id":"cash","name":"Cash","amount":11000,"updated":"2026-10-12"},{"id":"ing","name":"ING","amount":27000,"updated":"2026-10-11"},{"id":"swifts","name":"Swifts coin","amount":4000},{"id":"westpac-mv2as5t4","name":"Westpac","amount":1191,"updated":"2026-10-10"}],"log":[{"iso":"2026-10-11T14:10:33.995Z","text":"Borrowed 1,000 more from Apurba Deb"},{"iso":"2026-10-11T14:10:18.110Z","text":"Cash balance: 8,600 \u2192 11,000"},{"iso":"2026-10-11T12:56:02.865Z","text":"Nirupom Das paid 1,780"},{"iso":"2026-10-10T14:15:15.867Z","text":"ING balance: 32,700 \u2192 27,000"},{"iso":"2026-10-10T14:14:53.333Z","text":"CommBank balance: 1,150 \u2192 200"},{"iso":"2026-10-10T12:47:45.896Z","text":"Cash balance: 7,000 \u2192 8,600"},{"iso":"2026-10-10T11:15:04.936Z","text":"Added account Westpac (1,191)"},{"iso":"2026-10-10T11:11:23.208Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T11:08:07.675Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T10:42:35.736Z","text":"Lent 5,700 more to Apurba Barua"},{"iso":"2026-10-10T10:42:18.839Z","text":"Lent 312 more to Anup Sutradhar Srabon"},{"iso":"2026-10-09T10:11:50.758Z","text":"Jagjit Sangha paid 1,191"},{"iso":"2026-10-08T10:53:35.661Z","text":"Added Jagjit Sangha (4,764)"},{"iso":"2026-10-08T08:40:09.491Z","text":"Lent 1,000 more to Apurba Barua"},{"iso":"2026-10-08T08:38:35.971Z","text":"Sadman Iqbal Nafi paid 500"},{"iso":"2026-10-08T08:26:03.986Z","text":"Cash balance: 5,000 \u2192 7,000"},{"iso":"2026-10-07T11:19:04.796Z","text":"Nirupom Das paid 800"},{"iso":"2026-10-07T11:18:25.118Z","text":"Lent 1,000 more to Nirupom Das"},{"iso":"2026-10-07T11:16:25.970Z","text":"Mahbub Rahman Ontor paid 1,000"},{"iso":"2026-10-06T08:00:11.637Z","text":"Deleted Arian Zahir"},{"iso":"2026-10-06T07:28:25.187Z","text":"Deleted Badhon Sarkar Dip"},{"iso":"2026-10-05T13:16:35.404Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-05T08:15:25.941Z","text":"Edited Priyang"},{"iso":"2026-10-05T08:15:09.494Z","text":"Edited Das"},{"iso":"2026-10-05T06:19:15.661Z","text":"Cash balance: 4,000 \u2192 5,000"},{"iso":"2026-10-04T17:45:14.164Z","text":"Borrowed 5,000 more from Badhon Sarkar Dip"},{"iso":"2026-10-04T17:22:22.424Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:18:49.808Z","text":"Edited Angkon Karmakar"},{"iso":"2026-10-04T17:18:39.473Z","text":"Edited Sadman Iqbal Nafi"},{"iso":"2026-10-04T17:18:25.588Z","text":"Edited Anup Sutradhar Srabon"},{"iso":"2026-10-04T17:18:13.007Z","text":"Edited Himadri Das Himel"},{"iso":"2026-10-04T17:17:59.083Z","text":"Edited Iftikar Rob Chowdhury"},{"iso":"2026-10-04T17:17:43.200Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-04T17:17:28.805Z","text":"Edited Apurba Deb"},{"iso":"2026-10-04T17:17:21.425Z","text":"Edited Urmila Das Proma"},{"iso":"2026-10-04T17:17:07.627Z","text":"Edited Arian Zahir"},{"iso":"2026-10-04T17:16:59.635Z","text":"Edited Jonmajoy Kumar Das"},{"iso":"2026-10-04T17:16:43.480Z","text":"Edited Mahbub Rahman Ontor"},{"iso":"2026-10-04T17:16:21.580Z","text":"Edited Ayman Barua Akaash"},{"iso":"2026-10-04T17:16:06.621Z","text":"Edited Nirupom Das"},{"iso":"2026-10-04T17:15:54.024Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:15:44.023Z","text":"Edited Mrinmoy Chanda Shammo"},{"iso":"2026-10-04T17:15:01.584Z","text":"Edited Mrinmoy"},{"iso":"2026-10-04T17:11:38.729Z","text":"Edited Srabon"}],"history":[{"d":"2026-10-05","nw":112270},{"d":"2026-10-06","nw":117420},{"d":"2026-10-07","nw":116620},{"d":"2026-10-08","nw":123884},{"d":"2026-10-09","nw":122693},{"d":"2026-10-10","nw":131636},{"d":"2026-10-11","nw":123206},{"d":"2026-10-12","nw":124606}],"lastBackup":"2026-10-12"};
+
+/* ---------- helpers ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const toN=s=>{const[y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d)/864e5};
+const fromN=n=>{const d=new Date(n*864e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())};
+const addDays=(s,k)=>fromN(toN(s)+k);
+const fmtD=s=>new Date(toN(s)*864e5).toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});
+const fmtDs=s=>new Date(toN(s)*864e5).toLocaleDateString('en-AU',{day:'numeric',month:'short',timeZone:'UTC'});
+const num=n=>Math.round(n).toLocaleString('en-AU');
+const money=n=>(n<0?'−$':'$')+num(Math.abs(n));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=p=>p+'-'+Math.random().toString(36).slice(2,8);
+const first=n=>String(n).trim().split(/\s+/)[0];
+const daysIn=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
+
+function fortDates(anchor,from,to){const a=toN(anchor),f=toN(from),t=toN(to);const out=[];for(let n=a+14*Math.ceil((f-a)/14);n<=t;n+=14)out.push(fromN(n));return out}
+function monthDates(day,from,to){const out=[];let [y,m]=from.split('-').map(Number);const [ty,tm]=to.split('-').map(Number);
+  while(y<ty||(y===ty&&m<=tm)){const d=`${y}-${pad(m)}-${pad(Math.min(day,daysIn(y,m)))}`;if(d>=from&&d<=to)out.push(d);m++;if(m>12){m=1;y++}}return out}
+
+/* ---------- state ---------- */
+const KEY='dhiman-ledger-v2';
+let S=null, canSave=true;
+try{S=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){canSave=false}
+
+function defaultHouses(){
+  const t=(name,rent)=>({id:uid('t'),name,rent,anchor:'2026-10-11'});
+  return [
+    {id:'h1',name:'Felicity Drive',address:'18 Felicity Drive, Tarneit VIC 3029',rent:1150,freq:'fortnight',anchor:'2026-10-07',day:1,start:'2026-10-07',
+     tenants:[t('Apurba Deb',190),t('Sadman Iqbal Nafi',190),t('Badhon Sarkar Dip',190),t('Ayman Barua Akaash',260),t('Anup Sutradhar Srabon',288)]},
+    {id:'h2',name:'Olivia Rise',address:'4 Olivia Rise, Tarneit VIC 3029',rent:2513,freq:'month',anchor:'2026-10-07',day:15,start:'2026-10-12',
+     tenants:[t('Robin Hussain',355),t('Jonmajoy Kumar Das',305),t('Anish Das Ayon',305),t('Mrinmoy Chanda Shammo',200),t('Nirupom Das',220),t('Apurba Barua',205)]},
+    {id:'h3',name:'The Boulevard',address:'43 The Boulevard, Thomastown VIC 3074',rent:2200,freq:'month',anchor:'2026-10-07',day:1,start:'2026-10-12',
+     tenants:[t('Iftikar Rob Chowdhury',1325)]}
+  ];
+}
+function migrate(d){
+  d.entries=d.entries||[];d.assets=d.assets||[];d.log=d.log||[];d.history=d.history||[];
+  d.entries.forEach(e=>{e.payments=e.payments||[];e.payments.forEach(p=>{if(p.via===undefined)p.via=''})});
+  d.assets.forEach(a=>{if(a.liquid===undefined)a.liquid=/^(cash|ing|commbank|westpac)/.test(a.id)});
+  if(!d.houses){
+    d.houses=defaultHouses();
+    d.rentPayments=[];d.houses.forEach(h=>h.tenants.forEach(t=>d.rentPayments.push({id:uid('r'),t:t.id,h:h.id,due:t.anchor,amt:t.rent,via:'',iso:t.anchor,pre:true})));
+    d.landlordPaid=[{id:uid('l'),h:'h1',due:'2026-10-07',amt:1150,via:'',iso:'2026-10-07',pre:true}];
+  }
+  d.rentPayments=d.rentPayments||[];d.landlordPaid=d.landlordPaid||[];d.contacts=d.contacts||{};
+  if((d.v||0)<3){
+    const h1=d.houses.find(h=>h.id==='h1');
+    if(h1){h1.self=true;h1.tenants.forEach(t=>{if(t.anchor==='2026-10-11'){t.anchor='2026-10-07';d.rentPayments.forEach(p=>{if(p.t===t.id&&p.pre&&p.due==='2026-10-11'){p.due='2026-10-07';p.iso='2026-10-07'}})}})}
+    if(!d.houses.some(h=>h.kind==='car')){
+      const car={id:'car',kind:'car',name:'Car rent',address:'Paid with Felicity Drive rent on Wednesdays',rent:0,freq:'fortnight',anchor:'2026-10-07',day:1,start:'2026-10-07',
+        tenants:[{id:uid('t'),name:'Apurba Deb',rent:250,anchor:'2026-10-07'},{id:uid('t'),name:'Badhon Sarkar Dip',rent:250,anchor:'2026-10-07'}]};
+      d.houses.push(car);car.tenants.forEach(t=>d.rentPayments.push({id:uid('r'),t:t.id,h:car.id,due:t.anchor,amt:t.rent,via:'',iso:t.anchor,pre:true}));
+    }
+  }
+  d.bills=d.bills||[];d.carCosts=d.carCosts||[];d.moves=d.moves||[];d.trackStart=d.trackStart||'2026-10';
+  if(!d.cars){const c=(id,plate,use,rego,renter)=>({id,plate,name:'',use,renter:renter||'',regoExpiry:rego,regoMonths:3,serviceEvery:10000,odo:null,lastServiceKm:null,insExpiry:''});
+    d.cars=[c('c1','LOW4CT','personal','2026-11-30'),c('c2','ZXL012','personal','2027-01-30'),c('c3','YII138','rented','2026-11-24','Badhon Sarkar Dip'),c('c4','1XX6WN','rented','2026-11-25','Apurba Deb')]}
+  if((d.v||0)<5){
+    const n=d.entries.find(e=>e.id==='nirupam');const p=n&&n.payments.find(x=>x.amt===1780&&x.iso==='2026-10-11'&&!x.via);
+    if(p){p.amt=1300;p.via='ing';n.payments.splice(n.payments.indexOf(p)+1,0,{amt:480,iso:'2026-10-11',via:'cash'})}
+    const a=d.entries.find(e=>e.id==='apurba-deb');
+    if(a&&!d.moves.some(m=>m.who==='Apurba Deb'))d.moves.push({id:uid('m'),iso:'2026-10-12',via:'cash',amt:1000,who:'Apurba Deb',pre:true});
+  }
+  d.v=5;return d;
+}
+if(!S||!S.entries) S=migrate(JSON.parse(JSON.stringify(SEED)));
+else S=migrate(S);
+
+const ORDER=['cash','ing','westpac','commbank'];const rank=a=>{const i=ORDER.findIndex(o=>a.id.startsWith(o));return i<0?9:i};
+const liquid=()=>S.assets.filter(a=>a.liquid).sort((a,b)=>rank(a)-rank(b));
+const accName=id=>id==='offset'?'Taken off debt':id?(S.assets.find(a=>a.id===id)||{name:id}).name:'Not tracked';
+function adjust(via,delta){if(via&&via!=='offset')S.lastVia=via;const a=S.assets.find(x=>x.id===via);if(!a)return;a.amount=Math.round((a.amount+delta)*100)/100;a.updated=todayISO()}
+const paidOf=e=>e.payments.reduce((s,p)=>s+p.amt,0);
+const remOf=e=>e.amount-paidOf(e);
+function totals(){
+  const assets=S.assets.reduce((s,a)=>s+a.amount,0);
+  const get=S.entries.filter(e=>e.side==='get').reduce((s,e)=>s+Math.max(0,remOf(e)),0);
+  const owe=S.entries.filter(e=>e.side==='owe').reduce((s,e)=>s+Math.max(0,remOf(e)),0);
+  const cash=liquid().reduce((s,a)=>s+a.amount,0);
+  return {assets,get,owe,cash,nw:assets+get-owe};
+}
+function save(){
+  const t=totals(),d=todayISO();const h=S.history.find(x=>x.d===d);if(h)h.nw=t.nw;else S.history.push({d,nw:t.nw});
+  S.history=S.history.slice(-120);
+  try{localStorage.setItem(KEY,JSON.stringify(S));canSave=true}catch(e){canSave=false}
+}
+function commit(label,fn){
+  const snap=JSON.stringify({...S,undo:null});
+  fn();
+  S.undo={label,snap};
+  S.log.unshift({iso:new Date().toISOString(),text:label});S.log=S.log.slice(0,400);
+  save();closeSheet();render();toast(label);
+}
+function undo(){if(!S.undo)return;const l=S.undo.label;S=migrate(JSON.parse(S.undo.snap));S.log.unshift({iso:new Date().toISOString(),text:'Undid: '+l});save();render();toast('Undid: '+l)}
+
+/* ---------- rent logic ---------- */
+function houseDues(h,from,to){
+  if(!(h.rent>0))return [];
+  const ds=h.freq==='fortnight'?fortDates(h.anchor,from,to):monthDates(h.day,from,to);
+  return ds.map(d=>{const p=S.landlordPaid.find(x=>x.h===h.id&&x.due===d);
+    const pre=h.freq==='fortnight'?d<h.anchor:d<h.start;
+    return {date:d,amt:h.rent,paid:!!p||pre,pay:p}});
+}
+function tenantDues(t,from,to){
+  return fortDates(t.anchor,from,to).map(d=>{const ps=S.rentPayments.filter(x=>x.t===t.id&&x.due===d);const pre=d<t.anchor;const got=pre?t.rent:ps.reduce((s,x)=>s+x.amt,0);
+    return {date:d,amt:t.rent,got,left:Math.max(0,t.rent-got),paid:pre||got>=t.rent,pay:ps[0]}});
+}
+function tenantStatus(t){
+  const today=todayISO();
+  const dues=tenantDues(t,t.anchor,addDays(today,28));
+  const over=dues.filter(x=>!x.paid&&x.date<=today);
+  const next=dues.find(x=>!x.paid&&x.date>today);
+  return {over,overAmt:over.reduce((s,x)=>s+x.left,0),next,unpaid:dues.filter(x=>!x.paid)};
+}
+function houseStatus(h){
+  const today=todayISO();
+  const dues=houseDues(h,h.freq==='fortnight'?h.anchor:h.start,addDays(today,62));
+  const unpaid=dues.filter(x=>!x.paid);
+  return {unpaid,over:unpaid.filter(x=>x.date<=today),next:unpaid[0]};
+}
+function monthProfit(ym){
+  if(ym<S.trackStart)return {rows:S.houses.map(h=>({h,exp:0,got:0,cost:0,paid:0,bills:0,profit:0})),personal:0,self:0,exp:0,got:0,cost:0,paid:0,profit:0,before:true};
+  const [y,m]=ym.split('-').map(Number);const from=`${ym}-01`,to=`${ym}-${pad(daysIn(y,m))}`;
+  const rows=S.houses.map(h=>{
+    let exp=0,got=0;h.tenants.forEach(t=>tenantDues(t,from,to).forEach(d=>{exp+=d.amt;got+=d.got}));
+    let cost=0,paid=0;houseDues(h,from,to).forEach(d=>{cost+=d.amt;if(d.paid)paid+=d.pay?d.pay.amt:d.amt});
+    const inM=x=>x.iso>=from&&x.iso<=to;let bills=S.bills.filter(b=>b.h===h.id&&inM(b)).reduce((s,b)=>s+b.amt,0);
+    if(h.kind==='car')bills+=S.carCosts.filter(c=>inM(c)&&carOf(c).use==='rented').reduce((s,c)=>s+c.amt,0);
+    cost+=bills;paid+=bills;
+    return {h,exp,got,cost,paid,bills,profit:exp-cost};
+  });
+  const sum=k=>rows.reduce((s,r)=>s+r[k],0);
+  return {rows,personal:S.carCosts.filter(c=>c.iso>=from&&c.iso<=to&&carOf(c).use!=='rented').reduce((s,c)=>s+c.amt,0),self:rows.filter(r=>r.h.self&&r.profit<0).reduce((s,r)=>s-r.profit,0),exp:sum('exp'),got:sum('got'),cost:sum('cost'),paid:sum('paid'),profit:sum('profit')};
+}
+function avgMonthly(){
+  const per=S.houses.map(h=>{const inc=h.tenants.reduce((s,t)=>s+t.rent,0)*26/12;const cost=h.freq==='fortnight'?h.rent*26/12:h.rent;return {h,inc,cost,p:inc-cost}});
+  return {per,total:per.reduce((s,x)=>s+x.p,0)};
+}
+
+/* ---------- reminders ---------- */
+const phoneOf=n=>S.contacts[(n||'').toLowerCase().trim()]||'';
+function waLink(phone,text){let d=(phone||'').replace(/\D/g,'');if(d.startsWith('0'))d='61'+d.slice(1);return `https://wa.me/${d}?text=${encodeURIComponent(text)}`}
+const lbl=(h,a)=>h.kind==='car'?`your car rent of $${num(a)}`:`your rent of $${num(a)} for ${h.address.split(',')[0]}`;
+function buildReminders(){
+  const today=todayISO(),soon=addDays(today,3),out={over:[],soon:[],debts:[],bills:[]};
+  S.houses.forEach(h=>h.tenants.forEach(t=>{const st=tenantStatus(t);
+    if(st.over.length){const ds=st.over.map(x=>fmtDs(x.date)).join(', ');
+      out.over.push({name:t.name,amt:st.overAmt,sub:`${h.name} · overdue since ${fmtDs(st.over[0].date)}`,
+        text:`Hi ${first(t.name)}, a friendly reminder that ${lbl(h,st.overAmt)} is overdue (due ${ds}). Please pay as soon as you can. Thanks!`})}
+    else if(st.next&&st.next.date<=soon){
+      out.soon.push({name:t.name,amt:st.next.left,sub:`${h.name} · due ${fmtD(st.next.date)}`,
+        text:`Hi ${first(t.name)}, just a reminder that ${lbl(h,st.next.left)} is due on ${fmtD(st.next.date)}. Thanks!`})}
+  }));
+  S.entries.filter(e=>e.side==='get'&&remOf(e)>0).sort((a,b)=>remOf(b)-remOf(a)).forEach(e=>{
+    out.debts.push({name:e.name,amt:remOf(e),sub:e.payments.length?`Last paid ${fmtDs(e.payments[e.payments.length-1].iso)}`:'No payments yet',
+      text:`Hi ${first(e.name)}, hope you're well. Just a reminder that $${num(remOf(e))} is still outstanding. Please let me know when you can pay. Thanks!`})});
+  S.houses.forEach(h=>{const st=houseStatus(h);st.unpaid.filter(x=>x.date<=addDays(today,7)).forEach(x=>out.bills.push({h,d:x}))});
+  return out;
+}
+
+/* ---------- views ---------- */
+let tab='home',peopleSide='get',q='',month=todayISO().slice(0,7);
+const ICONS={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ people:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2"/>',
+ houses:'<path d="M3 21V10l6-5 6 5v11"/><path d="M15 21V12l3-2.5 3 2.5v9"/><path d="M7 21v-5h4v5"/><path d="M2 21h20"/>',
+ cars:'<path d="M5 12l1.8-4.6A1.5 1.5 0 0 1 8.2 6.4h7.6a1.5 1.5 0 0 1 1.4 1L19 12"/><rect x="3" y="12" width="18" height="5" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/>',
+ remind:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+ more:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'};
+const TITLES={home:'Home',people:'People',houses:'Houses & Rent',cars:'Cars',remind:'Reminders',more:'Report & more'};
+
+function renderTabs(){
+  const r=buildReminders();const n=r.over.length+r.soon.length+carAlerts().filter(a=>a.cls!=='ok').length;
+  document.getElementById('tabs').innerHTML=Object.keys(ICONS).map(k=>`<button data-tab="${k}" class="${tab===k?'on':''}" aria-label="${TITLES[k]}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${k==='houses'?'Houses':TITLES[k].split(' ')[0]}${k==='remind'&&n?`<span class="badge">${n}</span>`:''}</button>`).join('');
+}
+function spark(){
+  const h=S.history.slice(-30);if(h.length<2)return '';
+  const v=h.map(x=>x.nw),mn=Math.min(...v),mx=Math.max(...v),W=300,H=56,r=mx-mn||1;
+  const pts=v.map((y,i)=>[i*(W/(v.length-1)),4+(H-8)*(1-(y-mn)/r)]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const last=pts[pts.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Net worth trend"><path d="${d} L${W} ${H} L0 ${H}Z" fill="currentColor" opacity=".14"/><path d="${d}" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="currentColor"/></svg>`;
+}
+function vHome(){
+  const t=totals(),h=S.history;const pv=h.length>1?h[h.length-2]:null;const ch=pv?t.nw-pv.nw:0;
+  const mp=monthProfit(todayISO().slice(0,7));
+  const today=todayISO(),wk=addDays(today,7);const up=[];
+  S.houses.forEach(hs=>{hs.tenants.forEach(tn=>{const st=tenantStatus(tn);if(st.over.length)up.push({d:st.over[0].date,t:tn.name,s:hs.kind==='car'?'Car rent overdue':`Rent overdue · ${hs.name}`,a:st.overAmt,in:true,over:true});else if(st.next&&st.next.date<=wk)up.push({d:st.next.date,t:tn.name,s:hs.kind==='car'?'Car rent':`Rent · ${hs.name}`,a:st.next.left,in:true})});
+    houseStatus(hs).unpaid.filter(x=>x.date<=wk).forEach(x=>up.push({d:x.date,t:`${hs.name} rent`,s:'You pay landlord',a:x.amt,in:false,over:x.date<=today}))});
+  // group incoming rent by date+house to keep it short
+  const g={};up.forEach(u=>{const k=u.in?u.d+'|'+u.s+'|'+(u.over?'o':''):u.d+'|'+u.t;if(!g[k])g[k]={...u,n:0,a:0,names:[]};g[k].a+=u.a;g[k].n++;g[k].names.push(first(u.t))});
+  const ups=Object.values(g).sort((a,b)=>a.d<b.d?-1:1);
+  return `
+  <section><div class="hero"><div class="sub">Net worth</div><div class="big">${money(t.nw)}</div>
+    <div class="sub">${ch>=0?'+':'−'}$${num(Math.abs(ch))} ${pv?'since '+fmtDs(pv.d):''} · ${S.history.length} days tracked</div>${spark()}</div>
+    <div class="stats"><div class="stat"><span class="label">To collect</span><b class="pos">${money(t.get)}</b></div>
+    <div class="stat"><span class="label">I owe</span><b class="neg">${money(t.owe)}</b></div>
+    <div class="stat"><span class="label">Cash + bank</span><b>${money(t.cash)}</b></div></div>
+    <div class="quick"><button class="btn" data-tab="people">Got paid</button><button class="btn" data-tab="houses">Rent</button><button class="btn" data-tab="houses">Bills</button><button class="btn" data-tab="cars">Cars</button></div></section>
+  <section><div class="sec-h"><h2>Profit · ${new Date(toN(todayISO().slice(0,7)+'-01')*864e5).toLocaleDateString('en-AU',{month:'long',timeZone:'UTC'})}</h2><button class="btn sm" data-tab="houses">Details</button></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><div><span class="label">Expected profit</span><div style="font-family:var(--display);font-size:26px" class="${mp.profit>=0?'pos':'neg'}">${money(mp.profit)}</div></div>
+    <div style="text-align:right;font-size:13px" class="mut">Money in ${money(mp.exp)}<br>Money out ${money(mp.cost)}</div></div>
+    <div class="bar"><i style="width:${mp.exp?Math.min(100,mp.got/mp.exp*100):0}%"></i></div><div class="mut" style="font-size:12.5px;margin-top:4px">Collected ${money(mp.got)} of ${money(mp.exp)}</div></div></section>
+  <section><div class="sec-h"><h2>Next 7 days</h2></div><div class="list">${ups.length?ups.map(u=>`<div class="row"><div class="main"><div class="t">${u.in&&u.n>1?esc(u.names.join(', ')):esc(u.t)}</div><div class="s">${esc(u.s)} · ${fmtD(u.d)}</div></div><div class="amt ${u.in?'pos':'neg'}">${u.in?'+':'−'}${money(u.a)}${u.over?'<br><span class="pill bad">Overdue</span>':''}</div></div>`).join(''):'<div class="empty">Nothing due this week.</div>'}</div></section>
+  <section><div class="sec-h"><h2>Accounts</h2><button class="btn sm" data-act="addAcc">Add account</button></div>
+    <div class="list">${S.assets.map(a=>`<button class="row" data-act="acc" data-id="${a.id}"><div class="main"><div class="t">${esc(a.name)}</div><div class="s">${a.liquid?'Used for payments':'Investment'}${a.updated?' · updated '+fmtDs(a.updated):''}</div></div><div class="amt">${money(a.amount)}</div></button>`).join('')}</div></section>`;
+}
+function personRow(e){
+  const r=remOf(e),p=paidOf(e),pc=e.amount?Math.min(100,p/e.amount*100):0;
+  const last=e.payments[e.payments.length-1];
+  return `<div class="row"><button class="main rowbtn" data-act="person" data-id="${e.id}"><div class="t">${esc(e.name)}</div>
+  <div class="s">${r<=0?'<span class="pill ok">Settled</span>':last?`Paid ${money(p)} of ${money(e.amount)} · last ${fmtDs(last.iso)}${last.via?' via '+esc(accName(last.via)):''}`:`${money(e.amount)}${e.note?' · '+esc(e.note):''}`}</div>
+  ${p>0&&r>0?`<div class="bar"><i style="width:${pc}%"></i></div>`:''}</button><div class="amt ${e.side==='get'?'pos':'neg'}">${money(Math.max(0,r))}${r>0?`<div style="margin-top:4px"><button class="btn sm" data-act="pay" data-id="${e.id}">${e.side==='get'?'Got paid':'I paid'}</button></div>`:''}</div></div>`;
+}
+function vPeople(){
+  const t=totals();
+  const list=S.entries.filter(e=>e.side===peopleSide&&e.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>(remOf(b)>0)-(remOf(a)>0)||remOf(b)-remOf(a));
+  return `<section><div class="seg"><button data-side="get" class="${peopleSide==='get'?'on':''}">They owe me · ${money(t.get)}</button><button data-side="owe" class="${peopleSide==='owe'?'on':''}">I owe · ${money(t.owe)}</button></div>
+  <input class="search" id="q" placeholder="Search name" value="${esc(q)}" autocomplete="off">
+  <div class="list" id="plist">${list.map(personRow).join('')||'<div class="empty">No one here yet.</div>'}</div>
+  <button class="btn pri wide" data-act="addPerson">Add person</button></section>`;
+}
+function vHouses(){
+  const mp=monthProfit(month),av=avgMonthly();
+  const mName=new Date(toN(month+'-01')*864e5).toLocaleDateString('en-AU',{month:'long',year:'numeric',timeZone:'UTC'});
+  return `<section><div class="card"><div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${mName}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
+  ${mp.before?`<div class="mut" style="font-size:12.5px;margin-top:8px">Tracking started in October 2026, so there are no numbers for this month.</div>`:''}
+  <div class="tablewrap" style="margin-top:10px"><table class="ptable"><thead><tr><th>Source</th><th>Money in</th><th>Money out</th><th>Profit</th></tr></thead><tbody>
+  ${mp.rows.map(r=>`<tr><td>${esc(r.h.name)}${r.h.self?'<div class="mut" style="font-size:11.5px">You live here</div>':''}</td><td>${money(r.exp)}</td><td>${money(r.cost)}</td><td class="${r.profit>=0?'pos':'neg'}">${money(r.profit)}</td></tr>`).join('')}
+  </tbody><tfoot><tr><td>Total</td><td>${money(mp.exp)}</td><td>${money(mp.cost)}</td><td class="${mp.profit>=0?'pos':'neg'}">${money(mp.profit)}</td></tr></tfoot></table></div>
+  ${mp.self>0?`<div style="font-size:13px;margin-top:8px">Felicity Drive, where you live, costs you ${money(mp.self)} this month. Without it, you make <b class="pos">${money(mp.profit+mp.self)}</b>.</div>`:''}<div class="mut" style="font-size:12.5px;margin-top:8px">${(b=>b?`Bonds you hold: <b style="color:var(--ink)">${money(b)}</b>, to pay back when people leave. `:'')(S.houses.reduce((s,h)=>s+h.tenants.reduce((a,t)=>a+(t.bond||0),0),0))}Money out includes bills and rented car costs. So far: collected ${money(mp.got)}, paid out ${money(mp.paid)}. Fortnightly rents land 2 or 3 times a month, so months differ. Average month from rent alone: <b class="${av.total>=0?'pos':'neg'}">${money(av.total)}</b>, before bills and car costs.${mp.personal?` Personal car costs this month: ${money(mp.personal)} (not in profit).`:''}</div></div></section>
+  ${S.houses.map(vHouse).join('')}
+  <section><button class="btn wide" data-act="addHouse">Add house</button></section>`;
+}
+function vHouse(h){
+  const hs=houseStatus(h),today=todayISO();
+  const inc=h.tenants.reduce((s,t)=>s+t.rent,0);
+  const nx=hs.next;
+  return `<section><div class="card"><div class="house-h"><div><h3>${esc(h.name)}</h3><div class="s">${esc(h.address)}</div></div><button class="btn sm" data-act="editHouse" data-id="${h.id}">Edit</button></div>
+  ${h.rent>0?`<div class="landlord"><div><span class="label">You pay</span><div><b>${money(h.rent)}</b> ${h.freq==='fortnight'?'every 2nd Wednesday':'on the '+h.day+ord(h.day)+' monthly'}</div>
+  <div style="font-size:12.5px" class="${nx&&nx.date<=today?'neg':'mut'}">${nx?(nx.date<=today?'Overdue: ':'Next: ')+fmtD(nx.date):'All paid'}${hs.unpaid.filter(x=>x.date<=today).length>1?` (${hs.over.length} unpaid)`:''}</div></div>
+  ${nx?`<button class="btn sm pri" data-act="payLandlord" data-id="${h.id}">Mark paid</button>`:''}</div>`:''}
+  <div class="tenants">${h.tenants.map(t=>{const st=tenantStatus(t);
+    const pill=st.over.length?`<span class="pill bad">Owes ${money(st.overAmt)}</span>`:st.next?`<span class="pill ${toN(st.next.date)-toN(today)<=3?'soon':'ok'}">${toN(st.next.date)-toN(today)<=3?'Due '+fmtD(st.next.date):'Paid'}</span>`:'<span class="pill ok">Paid</span>';
+    return `<div class="row"><button class="main" style="background:none;border:0;padding:0;text-align:left" data-act="tenant" data-h="${h.id}" data-id="${t.id}"><div class="t">${esc(t.name)}</div><div class="s">${money(t.rent)} / fortnight · ${pill}</div></button>
+    <button class="btn sm" data-act="rentIn" data-h="${h.id}" data-id="${t.id}">Got paid</button></div>`}).join('')||'<div class="empty">No tenants yet.</div>'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap"><span class="mut" style="font-size:12.5px">${h.kind==='car'?'Car rent':'Tenants pay'} ${money(inc)} / fortnight${h.self?` · your share ${money(Math.max(0,h.rent-inc))}`:''}</span><button class="btn sm" data-act="addTenant" data-h="${h.id}">${h.kind==='car'?'Add person':'Add tenant'}</button></div>
+  ${h.kind==='car'?'':vBills(h)}
+  </div></section>`;
+}
+const ord=n=>(n%100>10&&n%100<14)?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th');
+function remItem(r,i,kind){
+  const ph=phoneOf(r.name);
+  return `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px"><div style="min-width:0"><b>${esc(r.name)}</b><div class="mut" style="font-size:12.5px">${esc(r.sub)}</div></div><b class="${kind==='soon'?'':'neg'}">${money(r.amt)}</b></div>
+  <div class="msg" id="m-${kind}-${i}">${esc(r.text)}</div>
+  <div class="btns">${ph?`<a class="btn sm pri" href="${waLink(ph,r.text)}" target="_blank" rel="noopener">WhatsApp</a><a class="btn sm" href="sms:${esc(ph)}?&body=${encodeURIComponent(r.text)}">SMS</a>`:`<button class="btn sm" data-act="phone" data-name="${esc(r.name)}">Add phone number</button><a class="btn sm" href="https://wa.me/?text=${encodeURIComponent(r.text)}" target="_blank" rel="noopener">WhatsApp</a>`}
+  <button class="btn sm" data-act="copy" data-src="m-${kind}-${i}">Copy text</button></div>
+  ${ph?`<div class="mut" style="font-size:12px;margin-top:6px">${esc(ph)} · <button class="btn sm" style="padding:1px 6px" data-act="phone" data-name="${esc(r.name)}">Change</button></div>`:''}</div>`;
+}
+function vRemind(){
+  const r=buildReminders();const ca=carAlerts();
+  return `<section><div class="sec-h"><h2>Cars</h2><span class="pill ${ca.some(a=>a.cls==='bad')?'bad':ca.length?'soon':'ok'}">${ca.length}</span></div><div class="list">${ca.map(a=>`<button class="row" data-tab="cars"><div class="main"><div class="t">${esc(a.c.plate)}</div><div class="s">${esc(carUse(a.c))}</div></div><span class="pill ${a.cls}">${esc(a.txt)}</span></button>`).join('')||'<div class="empty">No rego, service or insurance due in the next 30 days.</div>'}</div></section>
+  <section><div class="sec-h"><h2>Rent overdue</h2><span class="pill ${r.over.length?'bad':'ok'}">${r.over.length}</span></div>${r.over.map((x,i)=>remItem(x,i,'over')).join('')||'<div class="card empty">Everyone is up to date.</div>'}</section>
+  <section><div class="sec-h"><h2>Rent due in 3 days</h2><span class="pill n">${r.soon.length}</span></div>${r.soon.map((x,i)=>remItem(x,i,'soon')).join('')||'<div class="card empty">No rent due in the next 3 days.</div>'}</section>
+  <section><div class="sec-h"><h2>Your bills this week</h2></div><div class="list">${r.bills.map(b=>`<div class="row"><div class="main"><div class="t">${esc(b.h.name)} rent</div><div class="s">${fmtD(b.d.date)}</div></div><div class="amt neg">${money(b.d.amt)}</div></div>`).join('')||'<div class="empty">No landlord payments due this week.</div>'}</div></section>
+  <section><div class="sec-h"><h2>Money to collect</h2><span class="pill n">${r.debts.length}</span></div>${r.debts.map((x,i)=>remItem(x,i,'debt')).join('')}</section>
+  <p class="mut" style="font-size:12.5px">WhatsApp opens with the message filled in. You still tap Send there. SMS links may not open on every device; use Copy text if they don't.</p>`;
+}
+function vMore(){
+  return `${vReport()}${vPin()}<section><div class="sec-h"><h2>Undo</h2></div><div class="card">${S.undo?`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>Last change: <b>${esc(S.undo.label)}</b></span><button class="btn sm" data-act="undo">Undo</button></div>`:'<span class="mut">Nothing to undo.</span>'}</div></section>
+  <section><div class="sec-h"><h2>Backup</h2></div><div class="card" style="display:grid;gap:10px">
+  <span class="mut" style="font-size:13px">Data is saved in this browser only. Copy a backup and keep it in Notes or email it to yourself. Last backup: ${S.lastBackup?fmtD(S.lastBackup):'never'}.</span>
+  <div class="btns"><button class="btn pri" data-act="backup">Copy backup</button><label class="btn">Restore from file<input type="file" id="bkfile" accept=".json,application/json,text/plain" class="vh"></label><button class="btn" data-act="pasteRestore">Restore from text</button></div>
+  <textarea class="bk" id="bktext" placeholder="Backup text appears here, or paste one to restore" spellcheck="false"></textarea></div></section>
+  <section><div class="sec-h"><h2>Activity</h2></div><div class="list">${S.log.slice(0,80).map(l=>`<div class="row"><div class="main"><div class="t" style="font-weight:500;white-space:normal">${esc(l.text)}</div><div class="s">${new Date(l.iso).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div></div></div>`).join('')}</div></section>`;
+}
+function render(){
+  document.getElementById('ttl').textContent=TITLES[tab];
+  document.getElementById('hnw').textContent=money(totals().nw);
+  document.getElementById('warn').innerHTML=canSave?'':'<div class="save-warn">This browser is not saving changes. Copy a backup from More before you close the page.</div>';
+  const v={home:vHome,people:vPeople,houses:vHouses,cars:vCars,remind:vRemind,more:vMore}[tab]();
+  document.getElementById('view').innerHTML=v;renderTabs();
+}
+
+/* ---------- sheets ---------- */
+function sheet(html,onSubmit){
+  const el=document.getElementById('sheet');
+  el.innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  const f=el.querySelector('form');if(f)f.addEventListener('submit',ev=>{ev.preventDefault();onSubmit&&onSubmit(Object.fromEntries(new FormData(f)),f)});
+  const i=el.querySelector('input:not([type=radio]):not([type=hidden])');if(i)setTimeout(()=>i.focus(),50);
+}
+function closeSheet(){document.getElementById('sheet').innerHTML=''}
+function viaChips(name='via',sel){const opts=[...liquid().map(a=>[a.id,a.name]),['','Not tracked']];sel=sel??(liquid().some(a=>a.id===S.lastVia)?S.lastVia:(liquid()[0]||{}).id);
+  return `<div class="chips" role="radiogroup">${opts.map(([v,l])=>`<label><input type="radio" name="${name}" value="${esc(v)}" ${v===sel?'checked':''}><span>${esc(l)}</span></label>`).join('')}</div>`}
+const amtF=(v,label='Amount')=>`<label>${label}<input name="amt" type="number" inputmode="decimal" step="0.01" min="0" value="${v??''}" required></label>`;
+const dateF=(v=todayISO(),label='Date',name='iso')=>`<label>${label}<input name="${name}" type="date" value="${v}" required></label>`;
+const actions=(save,extra='')=>`<div class="btns" style="margin-top:4px">${extra}<button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri" style="flex:1">${save}</button></div>`;
+
+function personSheet(id){
+  const e=S.entries.find(x=>x.id===id);const r=remOf(e),get=e.side==='get';
+  sheet(`<h2>${esc(e.name)}</h2><div class="sub">${get?'Owes you':'You owe'} <b class="${get?'pos':'neg'}">${money(Math.max(0,r))}</b> of ${money(e.amount)}${e.note?' · '+esc(e.note):''}</div>
+  <div class="btns" style="margin-bottom:14px"><button class="btn pri" data-act="pay" data-id="${e.id}">${get?'Got paid':'I paid'}</button><button class="btn" data-act="more" data-id="${e.id}">${get?'Lend more':'Borrow more'}</button><button class="btn" data-act="editPerson" data-id="${e.id}">Edit</button>${get&&r>0?`<button class="btn" data-act="remindOne" data-id="${e.id}">Remind</button>`:''}</div>
+  <span class="label">Payments</span><div class="list" style="margin-top:6px">${e.payments.length?e.payments.map((p,i)=>({p,i})).reverse().map(({p,i})=>`<div class="row"><div class="main"><div class="t">${money(p.amt)}</div><div class="s">${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div>${p.via==='offset'?'':`<button class="btn sm" data-act="editPay" data-id="${e.id}" data-i="${i}">Change</button>`}<button class="btn sm dan" data-act="delPay" data-id="${e.id}" data-i="${i}">Remove</button></div>`).join(''):'<div class="empty">No payments yet.</div>'}</div>`);
+}
+function paySheet(id){
+  const e=S.entries.find(x=>x.id===id),get=e.side==='get';
+  sheet(`<h2>${get?esc(first(e.name))+' paid you':'You paid '+esc(first(e.name))}</h2><div class="sub">Still ${get?'owed':'to pay'}: ${money(remOf(e))}</div>
+  <form class="f">${amtF(Math.max(0,remOf(e)))}<div class="fld" style="font-size:14px;color:var(--ink)">${get?'How did they pay you? Bank or cash':'Paid from'}${viaChips()}</div>${dateF()}${actions('Save payment')}</form>`,
+  d=>{const amt=+d.amt;if(!amt)return;commit(`${get?e.name+' paid':'Paid '+e.name} ${num(amt)}${d.via?' · '+accName(d.via):''}`,()=>{e.payments.push({amt,iso:d.iso,via:d.via});adjust(d.via,get?amt:-amt)})});
+}
+function moreSheet(id){
+  const e=S.entries.find(x=>x.id===id),get=e.side==='get';
+  sheet(`<h2>${get?'Lend more to':'Borrow more from'} ${esc(first(e.name))}</h2><div class="sub">Adds to the total of ${money(e.amount)}</div>
+  <form class="f">${amtF('')}<div class="fld">${get?'Money left from':'Money went into'}${viaChips()}</div>${dateF()}${actions(get?'Add loan':'Add amount')}</form>`,
+  d=>{const amt=+d.amt;if(!amt)return;commit(`${get?'Lent':'Borrowed'} ${num(amt)} more ${get?'to':'from'} ${e.name}${d.via?' · '+accName(d.via):''}`,()=>{e.note=(e.note||num(e.amount))+' + '+num(amt);e.amount+=amt;adjust(d.via,get?-amt:amt);S.moves.push({id:uid('m'),iso:d.iso,via:d.via,amt:get?-amt:amt,who:e.name})})});
+}
+function editPersonSheet(id){
+  const e=id?S.entries.find(x=>x.id===id):null;
+  sheet(`<h2>${e?'Edit '+esc(first(e.name)):'Add person'}</h2><div class="sub">${e?'Change details. Balances in accounts stay the same.':'Someone you lent to or borrowed from'}</div>
+  <form class="f"><label>Name<input name="name" value="${esc(e?.name)}" required></label>
+  <div class="fld">Type<div class="chips"><label><input type="radio" name="side" value="get" ${(!e||e.side==='get')?'checked':''}><span>They owe me</span></label><label><input type="radio" name="side" value="owe" ${e?.side==='owe'?'checked':''}><span>I owe them</span></label></div></div>
+  <div class="two">${amtF(e?.amount??'','Total amount')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(e?.name))}" placeholder="04xx xxx xxx"></label></div>
+  ${e?'':`<div class="fld">Money moved via${viaChips('via','')}</div>`}
+  <label>Note<input name="note" value="${esc(e?.note)}"></label>
+  ${actions(e?'Save':'Add person',e?`<button type="button" class="btn dan" data-act="delPerson" data-id="${e.id}">Delete</button>`:'')}</form>`,
+  d=>{const amt=+d.amt||0;const name=d.name.trim();if(!name)return;
+    commit(e?`Edited ${name}`:`Added ${name} (${num(amt)})`,()=>{
+      if(d.phone.trim())S.contacts[name.toLowerCase()]=d.phone.trim();
+      if(e){e.name=name;e.side=d.side;e.amount=amt;e.note=d.note.trim()||undefined}
+      else{S.entries.push({id:uid('p'),name,side:d.side,amount:amt,payments:[],note:d.note.trim()||undefined,added:todayISO()});adjust(d.via,d.side==='get'?-amt:amt);if(amt)S.moves.push({id:uid('m'),iso:todayISO(),via:d.via,amt:d.side==='get'?-amt:amt,who:name})}})});
+}
+function accSheet(id){
+  const a=id?S.assets.find(x=>x.id===id):null;
+  sheet(`<h2>${a?esc(a.name):'Add account'}</h2><div class="sub">${a?'Set the real balance':'A bank, cash or investment'}</div>
+  <form class="f"><label>Name<input name="name" value="${esc(a?.name)}" required></label>${amtF(a?.amount??'','Balance')}
+  <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)"><input type="checkbox" name="liquid" style="width:auto" ${(!a||a.liquid)?'checked':''}> Use for payments (bank or cash)</label>
+  ${actions('Save',a?`<button type="button" class="btn dan" data-act="delAcc" data-id="${a.id}">Delete</button>`:'')}</form>`,
+  d=>{const amt=+d.amt||0;
+    if(a)commit(a.amount!==amt?`${d.name} balance: ${num(a.amount)} → ${num(amt)}`:`Edited ${d.name}`,()=>{a.name=d.name.trim();a.amount=amt;a.liquid=!!d.liquid;a.updated=todayISO()});
+    else commit(`Added account ${d.name} (${num(amt)})`,()=>S.assets.push({id:uid(d.name.toLowerCase().replace(/\W+/g,'')),name:d.name.trim(),amount:amt,liquid:!!d.liquid,updated:todayISO()}));});
+}
+function findT(hid,tid){const h=S.houses.find(x=>x.id===hid);return {h,t:h.tenants.find(x=>x.id===tid)}}
+function rentInSheet(hid,tid){
+  const {h,t}=findT(hid,tid);const st=tenantStatus(t);const opts=st.unpaid.slice(0,6);
+  if(!opts.length){toast('Nothing unpaid');return}
+  const debt=S.entries.find(e=>e.side==='owe'&&e.name.toLowerCase().trim()===t.name.toLowerCase().trim()&&remOf(e)>0);
+  sheet(`<h2>Rent from ${esc(first(t.name))}</h2><div class="sub">${esc(h.name)} · ${money(t.rent)} per fortnight</div>
+  <form class="f"><label>Which fortnight<select name="due">${opts.map(o=>`<option value="${o.date}">${fmtD(o.date)}${o.got?` (part paid, ${money(o.left)} left)`:o.date<=todayISO()?' (due)':''}</option>`).join('')}</select></label>
+  ${amtF(opts[0].left||t.rent)}<div class="mut" style="font-size:12px;margin-top:-6px">If they pay less than the full rent, the rest stays as owing.</div><div class="fld" style="font-size:14px;color:var(--ink)">How did they pay you? Bank or cash${viaChips()}${debt?`<div class="chips" style="margin-top:6px"><label><input type="radio" name="via" value="offset"><span>Take off what I owe ${esc(first(t.name))} (${money(remOf(debt))})</span></label></div>`:''}</div>${dateF()}${actions('Save rent')}</form>`,
+  d=>{const amt=+d.amt;commit(`${t.name} paid rent ${num(amt)} (${fmtDs(d.due)})${d.via==='offset'?' · taken off what you owe':d.via?' · '+accName(d.via):''}`,()=>{const rid=uid('r');
+    S.rentPayments.push({id:rid,t:t.id,h:h.id,due:d.due,amt,via:d.via,iso:d.iso});
+    if(d.via==='offset'&&debt)debt.payments.push({amt,iso:d.iso,via:'offset',rid});else adjust(d.via,amt)})});
+}
+function tenantSheet(hid,tid){
+  const {h,t}=findT(hid,tid);const st=tenantStatus(t);
+  const pays=S.rentPayments.filter(p=>p.t===t.id&&!p.pre).sort((a,b)=>a.due<b.due?1:-1);
+  sheet(`<h2>${esc(t.name)}</h2><div class="sub">${esc(h.name)}${t.bond?' · bond '+money(t.bond):''}${t.moveIn?' · since '+fmtDs(t.moveIn):''} · ${money(t.rent)} per fortnight (${new Date(toN(t.anchor)*864e5).toLocaleDateString('en-AU',{weekday:'long',timeZone:'UTC'})}s)${st.over.length?` · <b class="neg">owes ${money(st.overAmt)}</b>`:st.next?' · next '+fmtD(st.next.date):''}</div>
+  <div class="btns" style="margin-bottom:14px"><button class="btn pri" data-act="rentIn" data-h="${h.id}" data-id="${t.id}">Got paid</button><button class="btn" data-act="editTenant" data-h="${h.id}" data-id="${t.id}">Edit</button></div>
+  <span class="label">Rent received</span><div class="list" style="margin-top:6px">${pays.map(p=>`<div class="row"><div class="main"><div class="t">${money(p.amt)} · fortnight of ${fmtDs(p.due)}</div><div class="s">Paid ${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div>${p.via==='offset'?'':`<button class="btn sm" data-act="editRent" data-id="${p.id}">Change</button>`}<button class="btn sm dan" data-act="delRent" data-id="${p.id}">Remove</button></div>`).join('')||'<div class="empty">No rent recorded in the app yet.</div>'}</div>`);
+}
+function editTenantSheet(hid,tid){
+  const h=S.houses.find(x=>x.id===hid);const t=tid?h.tenants.find(x=>x.id===tid):null;
+  sheet(`<h2>${t?'Edit tenant':'Add tenant'}</h2><div class="sub">${esc(h.name)}</div>
+  <form class="f"><label>Name<input name="name" value="${esc(t?.name)}" required></label>
+  <div class="two">${amtF(t?.rent??'','Rent per fortnight')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(t?.name))}" placeholder="04xx xxx xxx"></label></div>
+  ${dateF(t?.anchor??todayISO(),'Last day they paid','anchor')}
+  <div class="two"><label>Bond you hold<input name="bond" type="number" inputmode="decimal" min="0" value="${t?.bond||''}" placeholder="0"></label><label>Move-in date<input name="movein" type="date" value="${t?.moveIn||''}"></label></div>
+  ${actions(t?'Save':'Add tenant',t?`<button type="button" class="btn dan" data-act="delTenant" data-h="${h.id}" data-id="${t.id}">Remove</button>`:'')}</form>`,
+  d=>{const name=d.name.trim();commit(t?`Edited tenant ${name}`:`Added tenant ${name} to ${h.name}`,()=>{
+    if(d.phone.trim())S.contacts[name.toLowerCase()]=d.phone.trim();
+    if(t){const moved=t.anchor!==d.anchor;Object.assign(t,{name,rent:+d.amt,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''});if(moved&&!S.rentPayments.some(p=>p.t===t.id&&p.due===d.anchor))S.rentPayments.push({id:uid('r'),t:t.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}
+    else{const nt={id:uid('t'),name,rent:+d.amt,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''};h.tenants.push(nt);S.rentPayments.push({id:uid('r'),t:nt.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}})});
+}
+function payLandlordSheet(hid){
+  const h=S.houses.find(x=>x.id===hid);const hs=houseStatus(h);
+  sheet(`<h2>Pay rent · ${esc(h.name)}</h2><div class="sub">${esc(h.address)}</div>
+  <form class="f"><label>Which payment<select name="due">${hs.unpaid.slice(0,4).map(o=>`<option value="${o.date}">${fmtD(o.date)}</option>`).join('')}</select></label>
+  ${amtF(h.rent)}<div class="fld">Paid from${viaChips()}</div>${dateF()}${actions('Mark paid')}</form>`,
+  d=>{const amt=+d.amt;commit(`Paid ${h.name} rent ${num(amt)} (${fmtDs(d.due)})${d.via?' · '+accName(d.via):''}`,()=>{S.landlordPaid.push({id:uid('l'),h:h.id,due:d.due,amt,via:d.via,iso:d.iso});adjust(d.via,-amt)})});
+}
+function editHouseSheet(hid){
+  const h=hid?S.houses.find(x=>x.id===hid):null;const fr=h?.freq||'month';
+  sheet(`<h2>${h?'Edit house':'Add house'}</h2><div class="sub">What you pay the landlord</div>
+  <form class="f"><label>Short name<input name="name" value="${esc(h?.name)}" required></label><label>Address<input name="address" value="${esc(h?.address)}"></label>
+  ${amtF(h?.rent??'','What you pay (0 if nothing)')}
+  <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)"><input type="checkbox" name="self" style="width:auto" ${h?.self?'checked':''}> I live here</label>
+  <div class="fld">How often<div class="chips"><label><input type="radio" name="freq" value="fortnight" ${fr==='fortnight'?'checked':''}><span>Every 2 weeks</span></label><label><input type="radio" name="freq" value="month" ${fr==='month'?'checked':''}><span>Monthly</span></label></div></div>
+  <div class="two">${dateF(h?.anchor??todayISO(),'Last paid (2-weekly)','anchor')}<label>Day of month (monthly)<input name="day" type="number" min="1" max="31" value="${h?.day??1}"></label></div>
+  ${actions(h?'Save':'Add house',h?`<button type="button" class="btn dan" data-act="delHouse" data-id="${h.id}">Delete</button>`:'')}</form>`,
+  d=>{const v={name:d.name.trim(),address:d.address.trim(),rent:+d.amt,freq:d.freq,anchor:d.anchor,day:+d.day||1,self:!!d.self};
+    commit(h?`Edited ${v.name}`:`Added house ${v.name}`,()=>{if(h)Object.assign(h,v);else S.houses.push({id:uid('h'),...v,start:todayISO(),tenants:[]})})});
+}
+function methodSheet(p,sign,name,list){
+  const old=p.via,T=p.amt;
+  sheet(`<h2>Change payment</h2><div class="sub">${money(T)} · ${esc(name)}. ${old?'Changing the method moves the money between your accounts.':'Old payment: this only sets the label. Balances stay the same.'}</div>
+  <form class="f"><div class="fld" style="font-size:14px;color:var(--ink)">${sign>0?'How did they pay you?':'Paid from'}${viaChips('via',old||(liquid()[0]||{}).id)}</div>
+  ${list?`<div class="fld" style="font-size:14px;color:var(--ink)">Paid two ways? Part paid another way (optional)<input name="amt2" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 480" style="margin-top:4px">${viaChips('via2','cash')}</div>`:''}
+  ${dateF(p.iso)}${actions('Save')}</form>`,
+  d=>{const a2=list?(+d.amt2||0):0;
+    if(a2&&a2>=T){toast('The second part must be less than '+money(T));return}
+    const a1=T-a2;
+    commit(a2?`${name}: ${num(T)} split into ${num(a1)} ${accName(d.via)} + ${num(a2)} ${accName(d.via2)}`:`${name}: ${num(T)} payment set to ${accName(d.via)}`,()=>{
+      if(old){adjust(old,-sign*T);adjust(d.via,sign*a1);if(a2)adjust(d.via2,sign*a2)}
+      p.via=d.via;p.iso=d.iso;
+      if(a2){p.amt=a1;list.splice(list.indexOf(p)+1,0,{amt:a2,iso:d.iso,via:d.via2})}})});
+}
+function phoneSheet(name){
+  sheet(`<h2>Phone for ${esc(first(name))}</h2><div class="sub">Australian mobile, e.g. 0412 345 678</div>
+  <form class="f"><label>Phone<input name="phone" type="tel" value="${esc(phoneOf(name))}" required></label>${actions('Save')}</form>`,
+  d=>commit(`Saved phone for ${name}`,()=>{S.contacts[name.toLowerCase().trim()]=d.phone.trim()}));
+}
+function confirmSheet(text,label,fn){
+  sheet(`<h2>${esc(text)}</h2><div class="sub">You can undo this from More.</div><div class="btns"><button class="btn" data-act="close">Cancel</button><button class="btn pri" style="flex:1;background:var(--owe);border-color:var(--owe)" id="okc">${esc(label)}</button></div>`);
+  document.getElementById('okc').onclick=fn;
+}
+
+/* ---------- bills & cars ---------- */
+function addMonths(s,n){let[y,m,d]=s.split('-').map(Number);m+=n;while(m>12){m-=12;y++}while(m<1){m+=12;y--}return `${y}-${pad(m)}-${pad(Math.min(d,daysIn(y,m)))}`}
+const daysTo=s=>toN(s)-toN(todayISO());
+const monthRange=ym=>{const[y,m]=ym.split('-').map(Number);return [ym+'-01',`${ym}-${pad(daysIn(y,m))}`]};
+const monthLabel=ym=>new Date(toN(ym+'-01')*864e5).toLocaleDateString('en-AU',{month:'long',year:'numeric',timeZone:'UTC'});
+function chipsOf(name,opts,sel){return `<div class="chips">${opts.map(o=>`<label><input type="radio" name="${name}" value="${esc(o)}" ${o===sel?'checked':''}><span>${esc(o)}</span></label>`).join('')}</div>`}
+const BILL_TYPES=['Electricity','Gas','Water','Internet','Council','Other'];
+const CAR_TYPES=['Rego','Service','Repair','Tyres','Insurance','Fuel','Other'];
+
+function vBills(h){
+  const [from,to]=monthRange(month);
+  const bs=S.bills.filter(b=>b.h===h.id&&b.iso>=from&&b.iso<=to).sort((a,b)=>a.iso<b.iso?1:-1);
+  const tot=bs.reduce((s,b)=>s+b.amt,0);
+  return `<div class="bills"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="label">Bills · ${monthLabel(month)} · ${money(tot)}</span><button class="btn sm" data-act="addBill" data-h="${h.id}">Add bill</button></div>
+  ${bs.map(b=>`<div class="row" style="padding-inline:0"><div class="main"><div class="t">${esc(b.type)} ${money(b.amt)}</div><div class="s">${fmtD(b.iso)} · ${esc(accName(b.via))}${b.note?' · '+esc(b.note):''}</div></div><button class="btn sm dan" data-act="delBill" data-id="${b.id}">Remove</button></div>`).join('')}</div>`;
+}
+function billSheet(hid){
+  const h=S.houses.find(x=>x.id===hid);
+  sheet(`<h2>Add bill · ${esc(h.name)}</h2><div class="sub">Counts as money out for this house in the month you pay it</div>
+  <form class="f"><div class="fld">Bill${chipsOf('type',BILL_TYPES,'Electricity')}</div>${amtF('')}
+  <div class="fld" style="font-size:14px;color:var(--ink)">Paid from${viaChips()}</div>${dateF()}
+  <label>Note<input name="note" placeholder="e.g. Jul–Sep quarter"></label>${actions('Save bill')}</form>`,
+  d=>{const amt=+d.amt||0;commit(`${h.name}: ${d.type} bill ${num(amt)}${d.via?' · '+accName(d.via):''}`,()=>{S.bills.push({id:uid('b'),h:h.id,type:d.type,amt,via:d.via,iso:d.iso,note:d.note.trim()||undefined});adjust(d.via,-amt)})});
+}
+
+function carStatus(c){
+  const rd=daysTo(c.regoExpiry);
+  const rego={days:rd,cls:rd<0?'bad':rd<=21?'soon':'ok',txt:rd<0?`Rego expired ${fmtDs(c.regoExpiry)}`:rd===0?'Rego expires today':`Rego to ${fmtDs(c.regoExpiry)} · ${rd} days left`};
+  let svc;
+  if(c.odo==null||c.lastServiceKm==null)svc={cls:'n',txt:'Add km to track service',left:null};
+  else{const next=c.lastServiceKm+c.serviceEvery,left=next-c.odo;svc={cls:left<=0?'bad':left<=1000?'soon':'ok',txt:left<=0?`Service overdue by ${num(-left)} km`:`Next service at ${num(next)} km · ${num(left)} km left`,left,next}}
+  let ins=null;if(c.insExpiry){const d=daysTo(c.insExpiry);ins={days:d,cls:d<0?'bad':d<=21?'soon':'ok',txt:d<0?`Insurance expired ${fmtDs(c.insExpiry)}`:`Insurance to ${fmtDs(c.insExpiry)} · ${d} days left`}}
+  return {rego,svc,ins};
+}
+function carAlerts(){const out=[];S.cars.forEach(c=>{const s=carStatus(c);
+  if(s.rego.days<=30)out.push({c,txt:s.rego.txt,cls:s.rego.cls});
+  if(s.svc.left!=null&&s.svc.left<=1000)out.push({c,txt:s.svc.txt,cls:s.svc.cls});
+  if(s.ins&&s.ins.days<=30)out.push({c,txt:s.ins.txt,cls:s.ins.cls})});return out}
+const carUse=c=>c.use==='rented'?`Rented to ${c.renter||'someone'}`:'Personal';
+const carOf=x=>S.cars.find(c=>c.id===x.car)||{};
+function vCars(){
+  const [from,to]=monthRange(month);
+  const inM=S.carCosts.filter(x=>x.iso>=from&&x.iso<=to);
+  const rentedCost=inM.filter(x=>carOf(x).use==='rented').reduce((s,x)=>s+x.amt,0);
+  const personal=inM.filter(x=>carOf(x).use!=='rented').reduce((s,x)=>s+x.amt,0);
+  const income=month<S.trackStart?0:S.houses.filter(h=>h.kind==='car').reduce((s,h)=>s+h.tenants.reduce((a,t)=>a+tenantDues(t,from,to).reduce((b,d)=>b+d.amt,0),0),0);
+  const al=carAlerts();
+  return `<section><div class="card"><div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${monthLabel(month)}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
+  <div class="tablewrap" style="margin-top:10px"><table class="ptable"><tbody>
+  <tr><td>Car rent in</td><td class="pos">${money(income)}</td></tr><tr><td>Rented car costs</td><td class="neg">${money(rentedCost)}</td></tr></tbody>
+  <tfoot><tr><td>Car rent profit</td><td class="${income-rentedCost>=0?'pos':'neg'}">${money(income-rentedCost)}</td></tr></tfoot></table></div>
+  <div class="mut" style="font-size:12.5px;margin-top:8px">Your personal car costs this month: <b style="color:var(--ink)">${money(personal)}</b>. These are not part of rent profit.</div></div></section>
+  ${al.length?`<section><div class="list">${al.map(a=>`<div class="row"><div class="main"><div class="t">${esc(a.c.plate)}</div><div class="s">${esc(carUse(a.c))}</div></div><span class="pill ${a.cls}">${esc(a.txt)}</span></div>`).join('')}</div></section>`:''}
+  ${S.cars.map(vCar).join('')}
+  <section><button class="btn wide" data-act="addCar">Add car</button></section>`;
+}
+function vCar(c){
+  const s=carStatus(c);
+  const costs=S.carCosts.filter(x=>x.car===c.id).sort((a,b)=>a.iso<b.iso?1:-1);
+  const total=costs.reduce((a,x)=>a+x.amt,0);
+  return `<section><div class="card"><div class="house-h"><div><h3>${esc(c.plate)}</h3><div class="s">${c.name?esc(c.name)+' · ':''}${esc(carUse(c))}</div></div><button class="btn sm" data-act="editCar" data-id="${c.id}">Edit</button></div>
+  <div class="landlord"><div><span class="label">Rego · every ${c.regoMonths} months</span><div style="margin-top:3px"><span class="pill ${s.rego.cls}">${s.rego.txt}</span></div></div><button class="btn sm pri" data-act="carCost" data-id="${c.id}" data-type="Rego">Pay rego</button></div>
+  <div class="landlord"><div><span class="label">Service · every ${num(c.serviceEvery)} km</span><div style="margin-top:3px"><span class="pill ${s.svc.cls}">${s.svc.txt}</span></div>${c.odo!=null?`<div class="mut" style="font-size:12px;margin-top:3px">Odometer ${num(c.odo)} km${c.odoDate?' on '+fmtDs(c.odoDate):''}</div>`:''}</div>
+  <div class="btns"><button class="btn sm" data-act="carKm" data-id="${c.id}">Update km</button><button class="btn sm pri" data-act="carCost" data-id="${c.id}" data-type="Service">Log service</button></div></div>
+  ${s.ins?`<div style="margin-top:8px"><span class="pill ${s.ins.cls}">${s.ins.txt}</span></div>`:''}
+  <div class="bills"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="label">Costs · total ${money(total)}</span><button class="btn sm" data-act="carCost" data-id="${c.id}">Add cost</button></div>
+  ${costs.slice(0,5).map(x=>`<div class="row" style="padding-inline:0"><div class="main"><div class="t">${esc(x.type)} ${money(x.amt)}</div><div class="s">${fmtD(x.iso)} · ${esc(accName(x.via))}${x.km!=null?' · '+num(x.km)+' km':''}${x.note?' · '+esc(x.note):''}</div></div><button class="btn sm dan" data-act="delCarCost" data-id="${x.id}">Remove</button></div>`).join('')||'<div class="empty" style="padding:8px 0">No costs yet.</div>'}
+  </div></div></section>`;
+}
+function carCostSheet(id,type){
+  const c=S.cars.find(x=>x.id===id);type=type||'Repair';
+  const last=S.carCosts.filter(x=>x.car===id&&x.type===type).sort((a,b)=>a.iso<b.iso?1:-1)[0];
+  sheet(`<h2>${type==='Rego'?'Pay rego':type==='Service'?'Log service':'Add car cost'} · ${esc(c.plate)}</h2>
+  <div class="sub">${type==='Rego'?`Rego moves from ${fmtDs(c.regoExpiry)} to ${fmtDs(addMonths(c.regoExpiry,c.regoMonths))}.`:esc(carUse(c))}</div>
+  <form class="f"><div class="fld">Type${chipsOf('type',CAR_TYPES,type)}</div>${amtF(last?last.amt:'')}
+  <div class="fld" style="font-size:14px;color:var(--ink)">Paid from${viaChips()}</div>${dateF()}
+  <label>Odometer km${type==='Service'?' at this service':' (optional)'}<input name="km" type="number" inputmode="numeric" min="0" value="${type==='Service'&&c.odo!=null?c.odo:''}" ${type==='Service'?'required':''}></label>
+  <label>Note<input name="note" placeholder="${type==='Service'?'e.g. oil and filter':''}"></label>${actions('Save')}</form>`,
+  d=>{const amt=+d.amt||0,km=d.km!==''?+d.km:null;
+    commit(`${c.plate}: ${d.type} ${num(amt)}${d.via?' · '+accName(d.via):''}`,()=>{
+      S.carCosts.push({id:uid('cc'),car:c.id,type:d.type,amt,via:d.via,iso:d.iso,km,note:d.note.trim()||undefined,prevRego:d.type==='Rego'?c.regoExpiry:undefined,prevSvc:d.type==='Service'?c.lastServiceKm:undefined});
+      adjust(d.via,-amt);
+      if(d.type==='Rego')c.regoExpiry=addMonths(c.regoExpiry,c.regoMonths);
+      if(d.type==='Service'&&km!=null)c.lastServiceKm=km;
+      if(km!=null&&(c.odo==null||km>=c.odo)){c.odo=km;c.odoDate=d.iso}})});
+}
+function carKmSheet(id){
+  const c=S.cars.find(x=>x.id===id);
+  sheet(`<h2>Update km · ${esc(c.plate)}</h2><div class="sub">Read the odometer on the dashboard. Service is due every ${num(c.serviceEvery)} km.</div>
+  <form class="f"><label>Odometer now (km)<input name="odo" type="number" inputmode="numeric" min="0" value="${c.odo??''}" required></label>
+  <label>Last service at (km)<input name="last" type="number" inputmode="numeric" min="0" value="${c.lastServiceKm??''}" placeholder="From the service sticker or book"></label>${actions('Save')}</form>`,
+  d=>commit(`${c.plate}: odometer ${num(+d.odo)} km`,()=>{c.odo=+d.odo;c.odoDate=todayISO();if(d.last!=='')c.lastServiceKm=+d.last}));
+}
+function editCarSheet(id){
+  const c=id?S.cars.find(x=>x.id===id):null;const use=c?.use||'personal';
+  sheet(`<h2>${c?'Edit '+esc(c.plate):'Add car'}</h2><div class="sub">Rego, service and insurance details</div>
+  <form class="f"><div class="two"><label>Number plate<input name="plate" value="${esc(c?.plate)}" required></label><label>Car (optional)<input name="name" value="${esc(c?.name)}" placeholder="e.g. Corolla"></label></div>
+  <div class="fld">Use${chipsOf('use',['Personal','Rented'],use==='rented'?'Rented':'Personal')}</div>
+  <label>Rented to (name)<input name="renter" value="${esc(c?.renter)}"></label>
+  <div class="two">${dateF(c?.regoExpiry??addMonths(todayISO(),3),'Rego expiry','rego')}<label>Rego every (months)<input name="months" type="number" min="1" max="12" value="${c?.regoMonths??3}" required></label></div>
+  <div class="two"><label>Service every (km)<input name="every" type="number" min="1000" step="500" value="${c?.serviceEvery??10000}" required></label><label>Insurance expiry (optional)<input name="ins" type="date" value="${c?.insExpiry||''}"></label></div>
+  ${actions(c?'Save':'Add car',c?`<button type="button" class="btn dan" data-act="delCar" data-id="${c.id}">Delete</button>`:'')}</form>`,
+  d=>{const v={plate:d.plate.trim().toUpperCase(),name:d.name.trim(),use:d.use==='Rented'?'rented':'personal',renter:d.renter.trim(),regoExpiry:d.rego,regoMonths:+d.months||3,serviceEvery:+d.every||10000,insExpiry:d.ins||''};
+    commit(c?`Edited car ${v.plate}`:`Added car ${v.plate}`,()=>{if(c)Object.assign(c,v);else S.cars.push({id:uid('c'),...v,odo:null,lastServiceKm:null})})});
+}
+
+/* ---------- monthly report ---------- */
+function flows(from,to){
+  const out=[],inR=x=>x.iso>=from&&x.iso<=to;
+  S.rentPayments.filter(p=>!p.pre&&inR(p)).forEach(p=>{const h=S.houses.find(x=>x.id===p.h);out.push({cat:h&&h.kind==='car'?'Car rent in':'House rent in',amt:p.amt,via:p.via})});
+  S.entries.forEach(e=>e.payments.filter(inR).forEach(p=>out.push({cat:e.side==='get'?'Loans paid back to you':'You paid back loans',amt:e.side==='get'?p.amt:-p.amt,via:p.via})));
+  S.moves.filter(inR).forEach(m=>out.push({cat:m.amt<0?'Money you lent':'Money you borrowed',amt:m.amt,via:m.via}));
+  S.landlordPaid.filter(p=>!p.pre&&inR(p)).forEach(p=>out.push({cat:'Landlord rent',amt:-p.amt,via:p.via}));
+  S.bills.filter(inR).forEach(b=>out.push({cat:'House bills',amt:-b.amt,via:b.via}));
+  S.carCosts.filter(inR).forEach(c=>out.push({cat:carOf(c).use==='rented'?'Rented car costs':'Personal car costs',amt:-c.amt,via:c.via}));
+  return out;
+}
+const CAT_ORDER=['House rent in','Car rent in','Loans paid back to you','Money you borrowed','Landlord rent','House bills','Rented car costs','Personal car costs','Money you lent','You paid back loans'];
+function monthSum(ym){const [f,t]=monthRange(ym);const fl=flows(f,t);const inn=fl.filter(x=>x.amt>0).reduce((s,x)=>s+x.amt,0),out=-fl.filter(x=>x.amt<0).reduce((s,x)=>s+x.amt,0);return {fl,inn,out,net:inn-out}}
+function vReport(){
+  const ms=monthSum(month);
+  const cats=CAT_ORDER.map(c=>[c,ms.fl.filter(x=>x.cat===c).reduce((s,x)=>s+x.amt,0)]).filter(x=>x[1]);
+  const accs=[...liquid().map(a=>[a.id,a.name]),['offset','Taken off debt'],['','Not set']].map(([id,n])=>{const f=ms.fl.filter(x=>(x.via||'')===id&&(id===''||true));
+    const inn=f.filter(x=>x.amt>0).reduce((s,x)=>s+x.amt,0),out=-f.filter(x=>x.amt<0).reduce((s,x)=>s+x.amt,0);return {n,inn,out}}).filter(a=>a.inn||a.out);
+  const known=new Set(liquid().map(a=>a.id).concat(['']));const other=ms.fl.filter(x=>!known.has(x.via||''));
+  if(other.length){const inn=other.filter(x=>x.amt>0).reduce((s,x)=>s+x.amt,0),out=-other.filter(x=>x.amt<0).reduce((s,x)=>s+x.amt,0);accs.push({n:'Other accounts',inn,out})}
+  const months=[];let [y,m]=month.split('-').map(Number);for(let i=0;i<6;i++){months.unshift(`${y}-${pad(m)}`);m--;if(!m){m=12;y--}}
+  const rows=months.map(k=>({k,...monthSum(k),p:monthProfit(k).profit}));const mx=Math.max(1,...rows.map(r=>Math.abs(r.net)));
+  return `<section><div class="sec-h"><h2>Monthly report</h2></div><div class="card" style="display:grid;gap:12px">
+  <div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${monthLabel(month)}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
+  <div class="stats"><div class="stat"><span class="label">Money in</span><b class="pos">${money(ms.inn)}</b></div><div class="stat"><span class="label">Money out</span><b class="neg">${money(ms.out)}</b></div><div class="stat"><span class="label">Net</span><b class="${ms.net>=0?'pos':'neg'}">${money(ms.net)}</b></div></div>
+  <div><span class="label">By type</span><div class="tablewrap"><table class="ptable"><tbody>${cats.map(([c,v])=>`<tr><td>${c}</td><td class="${v>=0?'pos':'neg'}">${v>=0?'+':''}${money(v)}</td></tr>`).join('')||'<tr><td class="mut">Nothing recorded this month.</td><td></td></tr>'}</tbody></table></div></div>
+  <div><span class="label">By account</span><div class="tablewrap"><table class="ptable"><thead><tr><th>Account</th><th>In</th><th>Out</th><th>Net</th></tr></thead><tbody>${accs.map(a=>`<tr><td>${esc(a.n)}</td><td>${money(a.inn)}</td><td>${money(a.out)}</td><td class="${a.inn-a.out>=0?'pos':'neg'}">${money(a.inn-a.out)}</td></tr>`).join('')||'<tr><td class="mut" colspan="4">Nothing recorded this month.</td></tr>'}</tbody></table></div></div>
+  <div><span class="label">Last 6 months</span><div class="tablewrap"><table class="ptable"><thead><tr><th>Month</th><th>In</th><th>Out</th><th>Net</th><th>Profit</th></tr></thead><tbody>${rows.map(r=>`<tr${r.k===month?' style="font-weight:700"':''}><td>${new Date(toN(r.k+'-01')*864e5).toLocaleDateString('en-AU',{month:'short',year:'2-digit',timeZone:'UTC'})}</td><td>${money(r.inn)}</td><td>${money(r.out)}</td><td class="${r.net>=0?'pos':'neg'}">${money(r.net)}<div class="bar" style="margin-top:3px"><i style="width:${Math.abs(r.net)/mx*100}%;${r.net<0?'background:var(--owe)':''}"></i></div></td><td>${r.k<S.trackStart?'<span class="mut">–</span>':money(r.p)}</td></tr>`).join('')}</tbody></table></div>
+  <div class="mut" style="font-size:12px;margin-top:6px">In and Out count money that moved this month, including loans. Profit is expected rent profit (rent in minus rent, bills and rented car costs). Manual balance edits are not counted.</div></div>
+  </div></section>`;
+}
+
+/* ---------- events ---------- */
+function toast(t){const el=document.getElementById('toast');el.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast.h);toast.h=setTimeout(()=>el.innerHTML='',2200)}
+async function copyText(t,ta){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){if(ta){ta.focus();ta.select()}toast('Select the text and copy it')}}
+function restore(txt){try{const d=JSON.parse(txt);if(!d.entries)throw 0;const snap=JSON.stringify({...S,undo:null});S=migrate(d);S.undo={label:'Restore backup',snap};save();render();toast('Backup restored')}catch(e){toast('That is not a valid backup')}}
+
+document.addEventListener('click',ev=>{
+  const tb=ev.target.closest('[data-tab]');if(tb){tab=tb.dataset.tab;closeSheet();render();scrollTo(0,0);return}
+  const sd=ev.target.closest('[data-side]');if(sd){peopleSide=sd.dataset.side;render();return}
+  const el=ev.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,id=el.dataset.id,h=el.dataset.h;
+  if(a==='close'){if(el.classList.contains('scrim')&&ev.target!==el)return;closeSheet();return}
+  ({
+    person:()=>personSheet(id),pay:()=>paySheet(id),more:()=>moreSheet(id),editPerson:()=>editPersonSheet(id),addPerson:()=>editPersonSheet(),
+    delPerson:()=>{const e=S.entries.find(x=>x.id===id);confirmSheet(`Delete ${e.name}?`,'Delete',()=>commit(`Deleted ${e.name}`,()=>S.entries=S.entries.filter(x=>x.id!==id)))},
+    editPay:()=>{const e=S.entries.find(x=>x.id===id);methodSheet(e.payments[+el.dataset.i],e.side==='get'?1:-1,e.name,e.payments)},
+    editRent:()=>{const p=S.rentPayments.find(x=>x.id===id);const t=S.houses.flatMap(h=>h.tenants).find(x=>x.id===p.t);methodSheet(p,1,t?t.name:'rent')},
+    delPay:()=>{const e=S.entries.find(x=>x.id===id),i=+el.dataset.i,p=e.payments[i];confirmSheet(`Remove ${money(p.amt)} payment?`,'Remove',()=>commit(`Removed ${num(p.amt)} payment (${e.name})`,()=>{e.payments.splice(i,1);adjust(p.via,e.side==='get'?-p.amt:p.amt);if(p.rid)S.rentPayments=S.rentPayments.filter(x=>x.id!==p.rid)}))},
+    remindOne:()=>{const e=S.entries.find(x=>x.id===id);closeSheet();tab='remind';render();toast('Find '+first(e.name)+' under Money to collect')},
+    acc:()=>accSheet(id),addAcc:()=>accSheet(),
+    delAcc:()=>{const x=S.assets.find(z=>z.id===id);confirmSheet(`Delete ${x.name}?`,'Delete',()=>commit(`Deleted account ${x.name}`,()=>S.assets=S.assets.filter(z=>z.id!==id)))},
+    mprev:()=>{let[y,m]=month.split('-').map(Number);m--;if(!m){m=12;y--}month=`${y}-${pad(m)}`;render()},
+    mnext:()=>{let[y,m]=month.split('-').map(Number);m++;if(m>12){m=1;y++}month=`${y}-${pad(m)}`;render()},
+    rentIn:()=>rentInSheet(h,id),tenant:()=>tenantSheet(h,id),editTenant:()=>editTenantSheet(h,id),addTenant:()=>editTenantSheet(h),
+    delTenant:()=>{const {h:hs,t}=findT(h,id);confirmSheet(`Remove ${t.name} from ${hs.name}?`,'Remove',()=>commit(`Removed tenant ${t.name}`,()=>hs.tenants=hs.tenants.filter(x=>x.id!==id)))},
+    delRent:()=>{const p=S.rentPayments.find(x=>x.id===id);confirmSheet(`Remove ${money(p.amt)} rent payment?`,'Remove',()=>commit(`Removed rent payment ${num(p.amt)}`,()=>{S.rentPayments=S.rentPayments.filter(x=>x.id!==id);adjust(p.via,-p.amt);if(p.via==='offset')S.entries.forEach(e=>e.payments=e.payments.filter(x=>x.rid!==p.id))}))},
+    addBill:()=>billSheet(h),
+    delBill:()=>{const b=S.bills.find(x=>x.id===id);confirmSheet(`Remove ${b.type} bill ${money(b.amt)}?`,'Remove',()=>commit(`Removed ${b.type} bill ${num(b.amt)}`,()=>{S.bills=S.bills.filter(x=>x.id!==id);adjust(b.via,b.amt)}))},
+    carCost:()=>carCostSheet(id,el.dataset.type),carKm:()=>carKmSheet(id),editCar:()=>editCarSheet(id),addCar:()=>editCarSheet(),
+    delCar:()=>{const c=S.cars.find(x=>x.id===id);confirmSheet(`Delete car ${c.plate}?`,'Delete',()=>commit(`Deleted car ${c.plate}`,()=>S.cars=S.cars.filter(x=>x.id!==id)))},
+    delCarCost:()=>{const x=S.carCosts.find(z=>z.id===id);const c=carOf(x);confirmSheet(`Remove ${x.type} ${money(x.amt)}?`,'Remove',()=>commit(`Removed ${c.plate||'car'} ${x.type} ${num(x.amt)}`,()=>{S.carCosts=S.carCosts.filter(z=>z.id!==id);adjust(x.via,x.amt);if(x.type==='Rego'&&x.prevRego&&c.id)c.regoExpiry=x.prevRego;if(x.type==='Service'&&x.prevSvc!==undefined&&c.id)c.lastServiceKm=x.prevSvc}))},
+    payLandlord:()=>payLandlordSheet(id),editHouse:()=>editHouseSheet(id),addHouse:()=>editHouseSheet(),
+    delHouse:()=>{const x=S.houses.find(z=>z.id===id);confirmSheet(`Delete ${x.name}?`,'Delete',()=>commit(`Deleted house ${x.name}`,()=>S.houses=S.houses.filter(z=>z.id!==id)))},
+    phone:()=>phoneSheet(el.dataset.name),
+    copy:()=>copyText(document.getElementById(el.dataset.src).textContent),
+    undo:()=>undo(),
+    pinOn:()=>pinSheet(),lockNow:()=>showLock(),
+    pinOff:()=>confirmSheet('Turn off the PIN?','Turn off',()=>{pinHash=null;try{localStorage.removeItem(PINKEY)}catch(e){}closeSheet();render();toast('PIN is off')}),
+    backup:()=>{S.lastBackup=todayISO();save();const t=JSON.stringify(S);const ta=document.getElementById('bktext');ta.value=t;copyText(t,ta);render();document.getElementById('bktext').value=t},
+    pasteRestore:()=>{const t=document.getElementById('bktext').value.trim();if(!t){toast('Paste a backup in the box first');return}confirmSheet('Replace all data with this backup?','Restore',()=>{closeSheet();restore(t)})}
+  }[a]||(()=>{}))();
+});
+document.addEventListener('input',ev=>{if(ev.target.id==='q'){q=ev.target.value;const l=document.getElementById('plist');
+  const list=S.entries.filter(e=>e.side===peopleSide&&e.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>(remOf(b)>0)-(remOf(a)>0)||remOf(b)-remOf(a));
+  l.innerHTML=list.map(personRow).join('')||'<div class="empty">No match.</div>'}});
+document.addEventListener('change',ev=>{if(ev.target.id==='bkfile'&&ev.target.files[0]){const r=new FileReader();r.onload=()=>restore(r.result);r.readAsText(ev.target.files[0])}});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeSheet()});
+
+/* ---------- PIN lock ---------- */
+const PINKEY='dhiman-ledger-pin';let pinHash=null,pinBuf='';try{pinHash=localStorage.getItem(PINKEY)}catch(e){}
+function hpin(s){let h=2166136261;for(const c of 'dhiman-ledger:'+s+':pin'){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h.toString(16)}
+function showLock(){pinBuf='';document.getElementById('view').innerHTML='';document.getElementById('lock').innerHTML=`<div class="lock"><div><h2>Dhiman Ledger</h2><div class="mut" style="margin-top:4px">Enter your PIN</div><div class="dots" id="dots">${'<i></i>'.repeat(4)}</div>
+  <div class="pad">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(k=>k===''?'<span></span>':`<button type="button" data-pin="${k}" aria-label="${k==='del'?'Delete':k}">${k==='del'?'⌫':k}</button>`).join('')}</div>
+  <button type="button" class="btn sm" data-pin="forgot">Forgot PIN</button></div></div>`}
+function pinPress(k){
+  if(k==='forgot'){document.getElementById('lock').innerHTML=`<div class="lock"><div style="max-width:340px"><h2>Forgot PIN</h2><p class="mut">The only way in is to erase the data on this phone and start again. Then restore your latest backup from Report &amp; more.</p><div class="btns" style="justify-content:center"><button type="button" class="btn" data-pin="back">Go back</button><button type="button" class="btn pri" style="background:var(--owe);border-color:var(--owe)" data-pin="erase">Erase and start again</button></div></div></div>`;return}
+  if(k==='back'){showLock();return}
+  if(k==='erase'){try{localStorage.removeItem(PINKEY);localStorage.removeItem(KEY)}catch(e){}pinHash=null;S=migrate(JSON.parse(JSON.stringify(SEED)));save();document.getElementById('lock').innerHTML='';tab='more';render();toast('Erased. Restore your backup below.');return}
+  pinBuf=k==='del'?pinBuf.slice(0,-1):(pinBuf+k).slice(0,4);
+  document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length));
+  if(pinBuf.length===4){if(hpin(pinBuf)===pinHash){document.getElementById('lock').innerHTML='';render()}else{const d=document.getElementById('dots');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');pinBuf='';setTimeout(()=>document.querySelectorAll('#dots i').forEach(i=>i.classList.remove('on')),300)}}
+}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-pin]');if(b)pinPress(b.dataset.pin)});
+function pinSheet(){
+  sheet(`<h2>Set a PIN</h2><div class="sub">4 numbers. Write it down. If you forget it, you need your backup to get back in.</div>
+  <form class="f"><div class="two"><label>New PIN<input name="p1" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required autocomplete="off"></label><label>Type it again<input name="p2" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required autocomplete="off"></label></div>${actions('Turn on PIN')}</form>`,
+  d=>{if(!/^\d{4}$/.test(d.p1)){toast('Use 4 numbers');return}if(d.p1!==d.p2){toast('The two PINs do not match');return}
+    pinHash=hpin(d.p1);try{localStorage.setItem(PINKEY,pinHash)}catch(e){}closeSheet();render();toast('PIN is on')});
+}
+function vPin(){return `<section><div class="sec-h"><h2>PIN lock</h2></div><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <span>${pinHash?'PIN is <b class="pos">on</b>. The app asks for it when it opens.':'<span class="mut">No PIN. Anyone with your phone can open this.</span>'}</span>
+  <div class="btns">${pinHash?'<button class="btn sm" data-act="lockNow">Lock now</button><button class="btn sm dan" data-act="pinOff">Turn off</button>':'<button class="btn sm pri" data-act="pinOn">Set PIN</button>'}</div></div></div></section>`}
+
+save();if(pinHash)showLock();else render();
+</script>
+
+</body></html>
