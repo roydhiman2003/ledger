@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Dhiman Ledger</title>
+<title>Roy's Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
@@ -7,18 +7,18 @@
 :root{
   --bg:#EEF3F0; --surface:#FFFFFF; --sunk:#E3EAE6; --ink:#13201B; --muted:#5A6A63; --line:#D5DFDA;
   --accent:#0E6A55; --accent-ink:#FFFFFF; --get:#127A4E; --owe:#B3412D; --warn:#A8690F;
-  --get-bg:#DDF0E5; --owe-bg:#F7E1DC; --warn-bg:#F6EBD5;
+  --get-bg:#DDF0E5; --owe-bg:#F7E1DC; --warn-bg:#F6EBD5; --hl-bg:#FFE36E; --hl-ink:#4A3A00;
   --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1412; --surface:#16201C; --sunk:#1D2925; --ink:#E4EDE8; --muted:#92A39B; --line:#28362F;
   --accent:#49BE9C; --accent-ink:#06120E; --get:#4FC48D; --owe:#EF7C64; --warn:#E2AC4D;
-  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; color-scheme:dark}}
+  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; --hl-bg:#5C4A0E; --hl-ink:#FFE79A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1412; --surface:#16201C; --sunk:#1D2925; --ink:#E4EDE8; --muted:#92A39B; --line:#28362F;
   --accent:#49BE9C; --accent-ink:#06120E; --get:#4FC48D; --owe:#EF7C64; --warn:#E2AC4D;
-  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; color-scheme:dark}
+  --get-bg:#173126; --owe-bg:#36201B; --warn-bg:#33291A; --hl-bg:#5C4A0E; --hl-ink:#FFE79A; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);padding-inline:16px;padding-block:0 96px;font-variant-numeric:tabular-nums}
 .wrap{max-width:640px;margin:0 auto}
@@ -111,12 +111,97 @@ form.f{display:grid;gap:12px}
 .chips input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13.5px;z-index:30;max-width:90vw}
 .empty{color:var(--muted);font-size:13.5px;padding:14px;text-align:center}
+.hl{display:inline-block;background:var(--hl-bg);color:var(--hl-ink);border-radius:5px;padding:1px 6px;font-size:12px;font-weight:600;margin:3px 4px 0 0}
+textarea.rc{width:100%;min-height:120px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font-size:15px;margin:4px 0 12px}
 textarea.bk{width:100%;height:120px;font-family:ui-monospace,monospace;font-size:11px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
+/* ---- v3 features ---- */
+.eye{width:34px;height:34px;border-radius:11px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--muted);padding:0}
+.eye svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.eye.on{color:var(--accent);background:var(--get-bg);border-color:transparent}
+.topr{display:flex;align-items:center;gap:10px}
+.ring{flex:none;border-radius:50%;padding:3px;background:conic-gradient(var(--get) calc(var(--p)*1%),var(--sunk) 0)}
+.ring.o{background:conic-gradient(var(--owe) calc(var(--p)*1%),var(--sunk) 0)}
+.ring .av{width:34px;height:34px;font-size:12.5px;box-shadow:0 0 0 2px var(--surface)}
+.chart{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:end;margin-top:10px}
+.chart .col{display:grid;gap:4px;justify-items:center;text-align:center}
+.chart .bars{height:110px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.chart .bars i{display:block;width:22px;border-radius:5px 5px 2px 2px;min-height:2px}
+.chart .bars i.in{background:var(--get)}.chart .bars i.out{background:color-mix(in srgb,var(--owe) 75%,transparent)}
+.chart .col span{font-size:11.5px;color:var(--muted);font-weight:600}.chart .col b{font-size:11.5px}
+.chart .col.now span{color:var(--ink)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);font-weight:600}.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.cal .wd{font-size:10.5px;text-align:center;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding-bottom:2px}
+.cal button{aspect-ratio:1/1.05;border:0;border-radius:10px;background:var(--sunk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;font-size:13px;font-weight:600}
+.cal button.empty{background:none;pointer-events:none}
+.cal button.today{outline:2px solid var(--accent);outline-offset:-2px;background:var(--get-bg)}
+.cal .dots{display:flex;gap:2px;height:6px}.cal .dots i{width:6px;height:6px;border-radius:50%}
+.d-ok{background:var(--get)}.d-bad{background:var(--owe)}.d-n{background:var(--muted);opacity:.55}.d-out{border-radius:2px!important}
+.chiprow{display:flex;gap:6px;overflow-x:auto;align-items:center;font-size:12px;color:var(--muted);font-weight:600;padding-bottom:2px}
+.chiprow button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 11px;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--ink)}
+.chiprow button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tl{position:relative;margin:8px 0 0 6px;padding-left:18px;border-left:2px solid var(--line);display:grid;gap:12px}
+.tl .ev{position:relative}.tl .ev::before{content:"";position:absolute;left:-25px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--tc,var(--muted))}
+.tl .ev .d{font-size:11.5px;color:var(--muted);font-weight:600}.tl .ev .x{font-size:12.5px;color:var(--muted);margin-top:2px;white-space:pre-wrap}
+.bk-warn{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:10px 12px;font-size:13.5px;font-weight:600}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;top:-14px;width:8px;height:13px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(760deg)}}
+#print{display:none}
+@media print{body{background:#fff!important;padding:0}.wrap,nav.tabs,#sheet,#toast,#lock{display:none!important}#print{display:block;color:#000;font:12px/1.45 var(--body)}
+  #print h1{font-size:22px}#print h2{font-size:14px;margin:16px 0 6px}#print table{width:100%;border-collapse:collapse}#print td,#print th{border-bottom:1px solid #ccc;padding:5px 4px;text-align:right}#print td:first-child,#print th:first-child{text-align:left}#print .g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}#print .g div{border:1px solid #ccc;border-radius:8px;padding:8px}#print .g b{display:block;font-size:16px}#print .m{color:#555}}
+/* ---- v2 polish ---- */
+.brand{display:flex;align-items:center;gap:8px;text-align:right}
+.brand b{display:block;font-family:var(--display);font-size:15px;line-height:1.1;color:var(--ink)}
+.brand i{display:block;font-style:normal;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.brand .logo{order:2;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,#0F7A61,#0B3B31);box-shadow:0 6px 14px -8px rgba(10,85,70,.9)}
+.brand .logo svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+:root{--shadow:0 1px 2px rgba(16,40,32,.05),0 6px 20px -10px rgba(16,40,32,.18);--r:18px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6)}}
+:root[data-theme="dark"]{--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6)}
+body{background:radial-gradient(1200px 380px at 50% -120px,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+header.top{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom-color:transparent;margin-inline:-16px;padding-inline:16px}
+header.top h1{font-size:23px;white-space:nowrap}
+header.top .when{font-size:12px;color:var(--muted);font-weight:500}
+.card,.list,.stat{border-radius:var(--r);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(140deg,#0F7A61 0%,#0A5546 55%,#0B3B31 100%);border-radius:22px;box-shadow:0 14px 30px -16px rgba(10,85,70,.8)}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)}
+.hero .big{font-size:38px;letter-spacing:-.02em}
+.stat{padding:12px 10px}.stat b{font-size:18px}.stat .label{white-space:nowrap;font-size:10px;letter-spacing:.05em}a.btn{color:var(--ink)}a.btn.pri{color:var(--accent-ink)}
+.stat .label::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--dot,var(--muted));vertical-align:1px}
+.av{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13.5px;font-family:var(--display);background:hsl(var(--h) 55% 88%);color:hsl(var(--h) 50% 26%)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .av{background:hsl(var(--h) 28% 22%);color:hsl(var(--h) 60% 78%)}}
+:root[data-theme="dark"] .av{background:hsl(var(--h) 28% 22%);color:hsl(var(--h) 60% 78%)}
+.grp{display:flex;align-items:center;gap:8px;margin:4px 2px -4px}
+.grp h3{font-size:14px;font-family:var(--body);font-weight:700;letter-spacing:0}
+.grp .ct{font-size:12px;color:var(--muted);margin-left:auto;font-weight:600}
+details.fold>summary{list-style:none;cursor:pointer}details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary .chev{transition:transform .15s;display:inline-block}details.fold[open]>summary .chev{transform:rotate(90deg)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.kpi{background:var(--sunk);border-radius:12px;padding:8px 10px}
+.kpi span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.kpi b{font-family:var(--display);font-size:16px}
+.house-h h3{font-size:19px}
+.hicon{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--get-bg);color:var(--accent)}
+.hicon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sec-h h2{font-size:18px}
+nav.tabs{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 -6px 20px -14px rgba(0,0,0,.25)}
+nav.tabs button svg{padding:2px 10px;width:44px;height:28px;border-radius:99px;transition:background .15s}
+nav.tabs button.on svg{background:var(--get-bg)}
+.btn{border-radius:11px;transition:transform .08s}.btn:active{transform:scale(.97)}
+.btn.pri{box-shadow:0 4px 12px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+.sheet{border-radius:22px 22px 0 0}
+.sheet::before{content:"";display:block;width:40px;height:4px;border-radius:9px;background:var(--line);margin:-6px auto 12px}
+.row .amt{font-family:var(--display);font-size:16px}
+.summary{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.summary .chipbox{flex:1;min-width:96px;background:var(--surface);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)}
+.summary .chipbox b{display:block;font-family:var(--display);font-size:20px}
+.summary .chipbox span{font-size:11.5px;color:var(--muted);font-weight:600}
 </style>
 
 <div class="wrap">
-  <header class="top"><h1 id="ttl">Home</h1><div class="nw">Net worth<b id="hnw">$0</b></div></header>
+  <header class="top"><div><h1 id="ttl">Home</h1><div class="when" id="when"></div></div><div class="topr"><button class="eye" id="eye" data-act="hide" aria-label="Hide amounts"></button><div class="brand" aria-label="Roy's Ledger"><span class="logo"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M9 8h6M9 11h4"/></svg></span><span><b>Roy's Ledger</b><i>Rent · Loans · Cars</i></span></div></div></header>
   <div id="warn"></div>
   <main id="view"></main>
 </div>
@@ -124,9 +209,10 @@ textarea.bk{width:100%;height:120px;font-family:ui-monospace,monospace;font-size
 <div id="sheet"></div>
 <div id="toast"></div>
 <div id="lock"></div>
+<div id="print"></div>
 
 <script>
-const SEED = {"entries":[{"id":"shammo","name":"Mrinmoy Chanda Shammo","side":"get","amount":11705,"payments":[],"note":"10,655 + 1,050","added":"2026-10-05"},{"id":"robin","name":"Robin Hussain","side":"get","amount":10700,"payments":[],"added":"2026-10-05"},{"id":"nirupam","name":"Nirupom Das","side":"get","amount":10490,"note":"2,050 + 7,300 + 1,000 + 70 + 70","payments":[{"amt":800,"iso":"2026-10-07"},{"amt":1780,"iso":"2026-10-11"}],"added":"2026-10-05"},{"id":"ayman","name":"Ayman Barua Akaash","side":"get","amount":9000,"note":"8,000 + 1,000","payments":[],"added":"2026-10-05"},{"id":"srabon","name":"Anup Sutradhar Srabon","side":"get","amount":4562,"payments":[],"added":"2026-10-05","note":"4,250 + 312"},{"id":"himel","name":"Priyang","side":"get","amount":4400,"payments":[],"added":"2026-10-05"},{"id":"sadman","name":"Sadman Iqbal Nafi","side":"get","amount":3615,"payments":[{"amt":500,"iso":"2026-10-08"}],"added":"2026-10-05"},{"id":"angkon","name":"Angkon Karmakar","side":"get","amount":3000,"payments":[],"added":"2026-10-05"},{"id":"ifti","name":"Iftikar Rob Chowdhury","side":"get","amount":2300,"payments":[],"added":"2026-10-05"},{"id":"apurba-barua","name":"Apurba Barua","side":"get","amount":8650,"payments":[],"added":"2026-10-05","note":"1,950 + 1,000 + 5,700"},{"id":"ontor","name":"Mahbub Rahman Ontor","side":"get","amount":1000,"payments":[{"amt":1000,"iso":"2026-10-07"}],"added":"2026-10-05"},{"id":"joy","name":"Jonmajoy Kumar Das","side":"get","amount":500,"payments":[],"added":"2026-10-05"},{"id":"proma","name":"Urmila Das Proma","side":"owe","amount":7500,"payments":[],"added":"2026-10-05"},{"id":"apurba-deb","name":"Apurba Deb","side":"owe","amount":6000,"payments":[],"added":"2026-10-05","note":"5,000 + 1,000"},{"id":"jagjit-sangha-muzf4tnx","name":"Jagjit Sangha","side":"get","amount":4764,"added":"2026-09-14","payments":[{"amt":1191,"iso":"2026-10-09"}]}],"assets":[{"id":"commsec","name":"CommSec shares","amount":25300},{"id":"commbank","name":"CommBank","amount":200,"updated":"2026-10-11"},{"id":"cash","name":"Cash","amount":11000,"updated":"2026-10-12"},{"id":"ing","name":"ING","amount":27000,"updated":"2026-10-11"},{"id":"swifts","name":"Swifts coin","amount":4000},{"id":"westpac-mv2as5t4","name":"Westpac","amount":1191,"updated":"2026-10-10"}],"log":[{"iso":"2026-10-11T14:10:33.995Z","text":"Borrowed 1,000 more from Apurba Deb"},{"iso":"2026-10-11T14:10:18.110Z","text":"Cash balance: 8,600 \u2192 11,000"},{"iso":"2026-10-11T12:56:02.865Z","text":"Nirupom Das paid 1,780"},{"iso":"2026-10-10T14:15:15.867Z","text":"ING balance: 32,700 \u2192 27,000"},{"iso":"2026-10-10T14:14:53.333Z","text":"CommBank balance: 1,150 \u2192 200"},{"iso":"2026-10-10T12:47:45.896Z","text":"Cash balance: 7,000 \u2192 8,600"},{"iso":"2026-10-10T11:15:04.936Z","text":"Added account Westpac (1,191)"},{"iso":"2026-10-10T11:11:23.208Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T11:08:07.675Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T10:42:35.736Z","text":"Lent 5,700 more to Apurba Barua"},{"iso":"2026-10-10T10:42:18.839Z","text":"Lent 312 more to Anup Sutradhar Srabon"},{"iso":"2026-10-09T10:11:50.758Z","text":"Jagjit Sangha paid 1,191"},{"iso":"2026-10-08T10:53:35.661Z","text":"Added Jagjit Sangha (4,764)"},{"iso":"2026-10-08T08:40:09.491Z","text":"Lent 1,000 more to Apurba Barua"},{"iso":"2026-10-08T08:38:35.971Z","text":"Sadman Iqbal Nafi paid 500"},{"iso":"2026-10-08T08:26:03.986Z","text":"Cash balance: 5,000 \u2192 7,000"},{"iso":"2026-10-07T11:19:04.796Z","text":"Nirupom Das paid 800"},{"iso":"2026-10-07T11:18:25.118Z","text":"Lent 1,000 more to Nirupom Das"},{"iso":"2026-10-07T11:16:25.970Z","text":"Mahbub Rahman Ontor paid 1,000"},{"iso":"2026-10-06T08:00:11.637Z","text":"Deleted Arian Zahir"},{"iso":"2026-10-06T07:28:25.187Z","text":"Deleted Badhon Sarkar Dip"},{"iso":"2026-10-05T13:16:35.404Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-05T08:15:25.941Z","text":"Edited Priyang"},{"iso":"2026-10-05T08:15:09.494Z","text":"Edited Das"},{"iso":"2026-10-05T06:19:15.661Z","text":"Cash balance: 4,000 \u2192 5,000"},{"iso":"2026-10-04T17:45:14.164Z","text":"Borrowed 5,000 more from Badhon Sarkar Dip"},{"iso":"2026-10-04T17:22:22.424Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:18:49.808Z","text":"Edited Angkon Karmakar"},{"iso":"2026-10-04T17:18:39.473Z","text":"Edited Sadman Iqbal Nafi"},{"iso":"2026-10-04T17:18:25.588Z","text":"Edited Anup Sutradhar Srabon"},{"iso":"2026-10-04T17:18:13.007Z","text":"Edited Himadri Das Himel"},{"iso":"2026-10-04T17:17:59.083Z","text":"Edited Iftikar Rob Chowdhury"},{"iso":"2026-10-04T17:17:43.200Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-04T17:17:28.805Z","text":"Edited Apurba Deb"},{"iso":"2026-10-04T17:17:21.425Z","text":"Edited Urmila Das Proma"},{"iso":"2026-10-04T17:17:07.627Z","text":"Edited Arian Zahir"},{"iso":"2026-10-04T17:16:59.635Z","text":"Edited Jonmajoy Kumar Das"},{"iso":"2026-10-04T17:16:43.480Z","text":"Edited Mahbub Rahman Ontor"},{"iso":"2026-10-04T17:16:21.580Z","text":"Edited Ayman Barua Akaash"},{"iso":"2026-10-04T17:16:06.621Z","text":"Edited Nirupom Das"},{"iso":"2026-10-04T17:15:54.024Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:15:44.023Z","text":"Edited Mrinmoy Chanda Shammo"},{"iso":"2026-10-04T17:15:01.584Z","text":"Edited Mrinmoy"},{"iso":"2026-10-04T17:11:38.729Z","text":"Edited Srabon"}],"history":[{"d":"2026-10-05","nw":112270},{"d":"2026-10-06","nw":117420},{"d":"2026-10-07","nw":116620},{"d":"2026-10-08","nw":123884},{"d":"2026-10-09","nw":122693},{"d":"2026-10-10","nw":131636},{"d":"2026-10-11","nw":123206},{"d":"2026-10-12","nw":124606}],"lastBackup":"2026-10-12"};
+const SEED = {"entries":[{"id":"shammo","name":"Mrinmoy Chanda Shammo","side":"get","amount":11705,"payments":[{"amt":1200,"iso":"2026-10-16","via":"ing"}],"note":"10,655 + 1,050","added":"2026-10-05"},{"id":"robin","name":"Robin Hussain","side":"get","amount":10700,"payments":[],"added":"2026-10-05"},{"id":"nirupam","name":"Nirupom Das","side":"get","amount":10490,"note":"2,050 + 7,300 + 1,000 + 70 + 70","payments":[{"amt":800,"iso":"2026-10-07","via":"cash"},{"amt":1300,"iso":"2026-10-11","via":"ing"},{"amt":480,"iso":"2026-10-11","via":"cash"}],"added":"2026-10-05"},{"id":"ayman","name":"Ayman Barua Akaash","side":"get","amount":8660,"payments":[{"amt":1160,"iso":"2026-10-13","via":"cash"}],"added":"2026-10-05"},{"id":"srabon","name":"Anup Sutradhar Srabon","side":"get","amount":4562,"payments":[{"amt":288,"iso":"2026-10-15","via":"ing"}],"added":"2026-10-05","note":"4,250 + 312"},{"id":"himel","name":"Priyang","side":"get","amount":4400,"payments":[],"added":"2026-10-05"},{"id":"sadman","name":"Sadman Iqbal Nafi","side":"get","amount":3615,"payments":[{"amt":500,"iso":"2026-10-08","via":""}],"added":"2026-10-05"},{"id":"angkon","name":"Angkon Karmakar","side":"get","amount":3000,"payments":[],"added":"2026-10-05"},{"id":"ifti","name":"Iftikar Rob Chowdhury","side":"get","amount":2300,"payments":[],"added":"2026-10-05"},{"id":"apurba-barua","name":"Apurba Barua","side":"get","amount":9150,"payments":[{"amt":500,"iso":"2026-10-14","via":"ing"},{"amt":410,"iso":"2026-10-15","via":"cash"},{"amt":1400,"iso":"2026-10-22","via":"cash"}],"added":"2026-10-05","note":"1,950 + 7200"},{"id":"ontor","name":"Mahbub Rahman Ontor","side":"get","amount":1000,"payments":[{"amt":1000,"iso":"2026-10-07","via":"ing"}],"added":"2026-10-05"},{"id":"joy","name":"Jonmajoy Kumar Das","side":"get","amount":500,"payments":[],"added":"2026-10-05"},{"id":"proma","name":"Urmila Das Proma","side":"owe","amount":7500,"payments":[],"added":"2026-10-05"},{"id":"apurba-deb","name":"Apurba Deb","side":"owe","amount":7000,"payments":[],"added":"2026-10-05","note":"5,000 + 1,000 + 1,000"},{"id":"jagjit-sangha-muzf4tnx","name":"Jagjit Sangha","side":"get","amount":4764,"added":"2026-09-14","payments":[{"amt":1191,"iso":"2026-10-09","via":"westpac-mv2as5t4"}]},{"id":"p-60j653","name":"Anish Das Ayon","side":"get","amount":550,"payments":[],"added":"2026-10-22"}],"assets":[{"id":"commsec","name":"CommSec shares","amount":37700,"liquid":false,"updated":"2026-10-22"},{"id":"commbank","name":"CommBank","amount":200,"updated":"2026-10-11","liquid":true},{"id":"cash","name":"Cash","amount":16450,"updated":"2026-10-22","liquid":true},{"id":"ing","name":"ING","amount":18981,"updated":"2026-10-22","liquid":true},{"id":"swifts","name":"Swifts coin","amount":4000,"liquid":false},{"id":"westpac-mv2as5t4","name":"Westpac","amount":683,"updated":"2026-10-22","liquid":true}],"log":[{"iso":"2026-10-21T15:52:01.685Z","text":"Cash balance: 15,560 → 16,450"},{"iso":"2026-10-21T15:49:56.898Z","text":"Edited Apurba Barua"},{"iso":"2026-10-21T15:48:31.838Z","text":"Apurba Barua paid 1,400 · Cash"},{"iso":"2026-10-21T15:38:31.165Z","text":"ING balance: 25,655 → 18,981"},{"iso":"2026-10-21T15:37:43.779Z","text":"CommSec shares balance: 25,300 → 37,700"},{"iso":"2026-10-21T15:35:28.163Z","text":"Added Anish Das Ayon (550)"},{"iso":"2026-10-21T15:33:23.132Z","text":"Westpac balance: 1,008 → 683"},{"iso":"2026-10-21T15:31:16.081Z","text":"Paid Felicity Drive rent 1,150 (21 Oct) · ING"},{"iso":"2026-10-21T15:30:58.126Z","text":"Sadman Iqbal Nafi paid rent 190 (21 Oct) · Cash"},{"iso":"2026-10-20T00:45:06.026Z","text":"Badhon Sarkar Dip paid rent 250 (21 Oct) · ING"},{"iso":"2026-10-20T00:45:03.436Z","text":"Apurba Deb paid rent 250 (21 Oct) · ING"},{"iso":"2026-10-20T00:22:07.928Z","text":"Badhon Sarkar Dip paid rent 190 (21 Oct) · ING"},{"iso":"2026-10-20T00:19:29.846Z","text":"Apurba Deb paid rent 190 (21 Oct) · ING"},{"iso":"2026-10-16T11:09:54.156Z","text":"Mrinmoy Chanda Shammo paid 1,200 · ING"},{"iso":"2026-10-15T14:34:18.583Z","text":"Edited tenant Nirupom Das"},{"iso":"2026-10-15T12:34:19.540Z","text":"Apurba Barua paid 410 · Cash"},{"iso":"2026-10-15T12:33:13.824Z","text":"Edited Apurba Barua"},{"iso":"2026-10-15T12:30:52.910Z","text":"Borrowed 1,000 more from Apurba Deb · Cash"},{"iso":"2026-10-15T12:29:58.300Z","text":"Undid: Borrowed 1,000 more from Apurba Deb · Cash"},{"iso":"2026-10-15T11:44:17.557Z","text":"Anup Sutradhar Srabon paid 288 · ING"},{"iso":"2026-10-14T12:10:49.647Z","text":"Edited Apurba Barua"},{"iso":"2026-10-14T12:09:38.124Z","text":"Apurba Barua paid 500 · ING"},{"iso":"2026-10-14T08:09:38.675Z","text":"Undid: Paid Olivia Rise rent 2,513 (15 Nov) · ING"},{"iso":"2026-10-14T08:07:52.171Z","text":"Paid Olivia Rise rent 2,513 (15 Oct) · ING"},{"iso":"2026-10-13T13:16:04.391Z","text":"Cash balance: 12,160 → 12,560"},{"iso":"2026-10-13T12:48:50.716Z","text":"Edited Ayman Barua Akaash"},{"iso":"2026-10-13T12:46:03.676Z","text":"Ayman Barua Akaash paid 1,160 · Cash"},{"iso":"2026-10-13T12:45:26.491Z","text":"Edited Ayman Barua Akaash"},{"iso":"2026-10-11T17:28:18.805Z","text":"Westpac balance: 1,191 → 1,008"},{"iso":"2026-10-11T17:22:18.029Z","text":"Removed Internet bill 109"},{"iso":"2026-10-11T17:21:43.412Z","text":"Felicity Drive: Internet bill 109 · ING"},{"iso":"2026-10-11T16:59:06.003Z","text":"Added tenant Nirupom Das to Car rent"},{"iso":"2026-10-11T16:46:10.203Z","text":"Saved phone for Ayman Barua Akaash"},{"iso":"2026-10-11T16:40:35.513Z","text":"Saved phone for Anup Sutradhar Srabon"},{"iso":"2026-10-11T16:36:42.133Z","text":"Mahbub Rahman Ontor: 1,000 payment set to ING"},{"iso":"2026-10-11T16:36:16.173Z","text":"Jagjit Sangha: 1,191 payment set to Westpac"},{"iso":"2026-10-11T16:35:28.166Z","text":"Nirupom Das: 800 payment set to Cash"},{"iso":"2026-10-11T14:10:33.995Z","text":"Borrowed 1,000 more from Apurba Deb"},{"iso":"2026-10-11T14:10:18.110Z","text":"Cash balance: 8,600 → 11,000"},{"iso":"2026-10-11T12:56:02.865Z","text":"Nirupom Das paid 1,780"},{"iso":"2026-10-10T14:15:15.867Z","text":"ING balance: 32,700 → 27,000"},{"iso":"2026-10-10T14:14:53.333Z","text":"CommBank balance: 1,150 → 200"},{"iso":"2026-10-10T12:47:45.896Z","text":"Cash balance: 7,000 → 8,600"},{"iso":"2026-10-10T11:15:04.936Z","text":"Added account Westpac (1,191)"},{"iso":"2026-10-10T11:11:23.208Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T11:08:07.675Z","text":"Lent 70 more to Nirupom Das"},{"iso":"2026-10-10T10:42:35.736Z","text":"Lent 5,700 more to Apurba Barua"},{"iso":"2026-10-10T10:42:18.839Z","text":"Lent 312 more to Anup Sutradhar Srabon"},{"iso":"2026-10-09T10:11:50.758Z","text":"Jagjit Sangha paid 1,191"},{"iso":"2026-10-08T10:53:35.661Z","text":"Added Jagjit Sangha (4,764)"},{"iso":"2026-10-08T08:40:09.491Z","text":"Lent 1,000 more to Apurba Barua"},{"iso":"2026-10-08T08:38:35.971Z","text":"Sadman Iqbal Nafi paid 500"},{"iso":"2026-10-08T08:26:03.986Z","text":"Cash balance: 5,000 → 7,000"},{"iso":"2026-10-07T11:19:04.796Z","text":"Nirupom Das paid 800"},{"iso":"2026-10-07T11:18:25.118Z","text":"Lent 1,000 more to Nirupom Das"},{"iso":"2026-10-07T11:16:25.970Z","text":"Mahbub Rahman Ontor paid 1,000"},{"iso":"2026-10-06T08:00:11.637Z","text":"Deleted Arian Zahir"},{"iso":"2026-10-06T07:28:25.187Z","text":"Deleted Badhon Sarkar Dip"},{"iso":"2026-10-05T13:16:35.404Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-05T08:15:25.941Z","text":"Edited Priyang"},{"iso":"2026-10-05T08:15:09.494Z","text":"Edited Das"},{"iso":"2026-10-05T06:19:15.661Z","text":"Cash balance: 4,000 → 5,000"},{"iso":"2026-10-04T17:45:14.164Z","text":"Borrowed 5,000 more from Badhon Sarkar Dip"},{"iso":"2026-10-04T17:22:22.424Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:18:49.808Z","text":"Edited Angkon Karmakar"},{"iso":"2026-10-04T17:18:39.473Z","text":"Edited Sadman Iqbal Nafi"},{"iso":"2026-10-04T17:18:25.588Z","text":"Edited Anup Sutradhar Srabon"},{"iso":"2026-10-04T17:18:13.007Z","text":"Edited Himadri Das Himel"},{"iso":"2026-10-04T17:17:59.083Z","text":"Edited Iftikar Rob Chowdhury"},{"iso":"2026-10-04T17:17:43.200Z","text":"Edited Badhon Sarkar Dip"},{"iso":"2026-10-04T17:17:28.805Z","text":"Edited Apurba Deb"},{"iso":"2026-10-04T17:17:21.425Z","text":"Edited Urmila Das Proma"},{"iso":"2026-10-04T17:17:07.627Z","text":"Edited Arian Zahir"},{"iso":"2026-10-04T17:16:59.635Z","text":"Edited Jonmajoy Kumar Das"},{"iso":"2026-10-04T17:16:43.480Z","text":"Edited Mahbub Rahman Ontor"},{"iso":"2026-10-04T17:16:21.580Z","text":"Edited Ayman Barua Akaash"},{"iso":"2026-10-04T17:16:06.621Z","text":"Edited Nirupom Das"},{"iso":"2026-10-04T17:15:54.024Z","text":"Edited Robin Hussain"},{"iso":"2026-10-04T17:15:44.023Z","text":"Edited Mrinmoy Chanda Shammo"},{"iso":"2026-10-04T17:15:01.584Z","text":"Edited Mrinmoy"},{"iso":"2026-10-04T17:11:38.729Z","text":"Edited Srabon"}],"history":[{"d":"2026-10-05","nw":112270},{"d":"2026-10-06","nw":117420},{"d":"2026-10-07","nw":116620},{"d":"2026-10-08","nw":123884},{"d":"2026-10-09","nw":122693},{"d":"2026-10-10","nw":131636},{"d":"2026-10-11","nw":123206},{"d":"2026-10-12","nw":124423.32},{"d":"2026-10-13","nw":124083.32},{"d":"2026-10-14","nw":122070.32},{"d":"2026-10-15","nw":122070.32},{"d":"2026-10-16","nw":122070.32},{"d":"2026-10-20","nw":122950.32},{"d":"2026-10-21","nw":122950.32},{"d":"2026-10-22","nw":128681}],"lastBackup":"2026-10-22","houses":[{"id":"h1","name":"Felicity Drive","address":"18 Felicity Drive, Tarneit VIC 3029","rent":1150,"freq":"fortnight","anchor":"2026-10-07","day":1,"start":"2026-10-07","tenants":[{"id":"t-qrujmx","name":"Apurba Deb","rent":190,"anchor":"2026-10-07"},{"id":"t-neo3t6","name":"Sadman Iqbal Nafi","rent":190,"anchor":"2026-10-07"},{"id":"t-pmybei","name":"Badhon Sarkar Dip","rent":190,"anchor":"2026-10-07"},{"id":"t-9wvu7i","name":"Ayman Barua Akaash","rent":260,"anchor":"2026-10-07"},{"id":"t-46n7bb","name":"Anup Sutradhar Srabon","rent":288,"anchor":"2026-10-07"}],"self":true},{"id":"h2","name":"Olivia Rise","address":"4 Olivia Rise, Tarneit VIC 3029","rent":2513,"freq":"month","anchor":"2026-10-07","day":15,"start":"2026-10-12","tenants":[{"id":"t-xmbahc","name":"Robin Hussain","rent":355,"anchor":"2026-10-11"},{"id":"t-dmf4sh","name":"Jonmajoy Kumar Das","rent":305,"anchor":"2026-10-11"},{"id":"t-0qzcbo","name":"Anish Das Ayon","rent":305,"anchor":"2026-10-11"},{"id":"t-xgaa66","name":"Mrinmoy Chanda Shammo","rent":200,"anchor":"2026-10-11"},{"id":"t-ln7l61","name":"Nirupom Das","rent":220,"anchor":"2026-10-11"},{"id":"t-rawsfe","name":"Apurba Barua","rent":205,"anchor":"2026-10-11"}]},{"id":"h3","name":"The Boulevard","address":"43 The Boulevard, Thomastown VIC 3074","rent":2200,"freq":"month","anchor":"2026-10-07","day":1,"start":"2026-10-12","tenants":[{"id":"t-rkgxfx","name":"Iftikar Rob Chowdhury","rent":1325,"anchor":"2026-10-11"}]},{"id":"car","kind":"car","name":"Car rent","address":"Paid with Felicity Drive rent on Wednesdays","rent":0,"freq":"fortnight","anchor":"2026-10-07","day":1,"start":"2026-10-07","tenants":[{"id":"t-jf2za9","name":"Apurba Deb","rent":250,"anchor":"2026-10-07"},{"id":"t-p5bvlw","name":"Badhon Sarkar Dip","rent":250,"anchor":"2026-10-07"},{"id":"t-jyvkgs","name":"Nirupom Das","rent":200,"anchor":"2026-09-30","bond":0,"moveIn":""}]}],"rentPayments":[{"id":"r-4y39sj","t":"t-qrujmx","h":"h1","due":"2026-10-07","amt":190,"via":"","iso":"2026-10-07","pre":true},{"id":"r-ucdf9l","t":"t-neo3t6","h":"h1","due":"2026-10-07","amt":190,"via":"","iso":"2026-10-07","pre":true},{"id":"r-j63axq","t":"t-pmybei","h":"h1","due":"2026-10-07","amt":190,"via":"","iso":"2026-10-07","pre":true},{"id":"r-4jt43l","t":"t-9wvu7i","h":"h1","due":"2026-10-07","amt":260,"via":"","iso":"2026-10-07","pre":true},{"id":"r-jqairu","t":"t-46n7bb","h":"h1","due":"2026-10-07","amt":288,"via":"","iso":"2026-10-07","pre":true},{"id":"r-7cvpvp","t":"t-xmbahc","h":"h2","due":"2026-10-11","amt":355,"via":"","iso":"2026-10-11","pre":true},{"id":"r-g4o3i0","t":"t-dmf4sh","h":"h2","due":"2026-10-11","amt":305,"via":"","iso":"2026-10-11","pre":true},{"id":"r-r0cdmt","t":"t-0qzcbo","h":"h2","due":"2026-10-11","amt":305,"via":"","iso":"2026-10-11","pre":true},{"id":"r-p9kovr","t":"t-xgaa66","h":"h2","due":"2026-10-11","amt":200,"via":"","iso":"2026-10-11","pre":true},{"id":"r-k1lskk","t":"t-ln7l61","h":"h2","due":"2026-10-11","amt":220,"via":"","iso":"2026-10-11","pre":true},{"id":"r-9fjd18","t":"t-rawsfe","h":"h2","due":"2026-10-11","amt":205,"via":"","iso":"2026-10-11","pre":true},{"id":"r-b3z2pf","t":"t-rkgxfx","h":"h3","due":"2026-10-11","amt":1325,"via":"","iso":"2026-10-11","pre":true},{"id":"r-4aqu8c","t":"t-jf2za9","h":"car","due":"2026-10-07","amt":250,"via":"","iso":"2026-10-07","pre":true},{"id":"r-mrfb6r","t":"t-p5bvlw","h":"car","due":"2026-10-07","amt":250,"via":"","iso":"2026-10-07","pre":true},{"id":"r-8g3pa9","t":"t-jyvkgs","h":"car","due":"2026-10-07","amt":200,"via":"","iso":"2026-10-07","pre":true},{"id":"r-lpwizr","t":"t-jyvkgs","h":"car","due":"2026-09-30","amt":200,"via":"","iso":"2026-09-30","pre":true},{"id":"r-vjqlok","t":"t-qrujmx","h":"h1","due":"2026-10-21","amt":190,"via":"ing","iso":"2026-10-20"},{"id":"r-7nibci","t":"t-pmybei","h":"h1","due":"2026-10-21","amt":190,"via":"ing","iso":"2026-10-20"},{"id":"r-4l7azy","t":"t-jf2za9","h":"car","due":"2026-10-21","amt":250,"via":"ing","iso":"2026-10-20"},{"id":"r-iew47t","t":"t-p5bvlw","h":"car","due":"2026-10-21","amt":250,"via":"ing","iso":"2026-10-20"},{"id":"r-1ch56f","t":"t-neo3t6","h":"h1","due":"2026-10-21","amt":190,"via":"cash","iso":"2026-10-22"}],"landlordPaid":[{"id":"l-lqsxuq","h":"h1","due":"2026-10-07","amt":1150,"via":"","iso":"2026-10-07","pre":true},{"id":"l-j078wt","h":"h2","due":"2026-10-15","amt":2513,"via":"ing","iso":"2026-10-15"},{"id":"l-llggz2","h":"h1","due":"2026-10-21","amt":1150,"via":"ing","iso":"2026-10-22"}],"contacts":{"anup sutradhar srabon":"0474 642 319","ayman barua akaash":"+61 451 381 302","nirupom das":"+61 431 009 050"},"bills":[],"carCosts":[],"moves":[{"id":"m-kyugmh","iso":"2026-10-12","via":"cash","amt":1000,"who":"Apurba Deb","pre":true},{"id":"m-1gbk7g","iso":"2026-10-15","via":"cash","amt":1000,"who":"Apurba Deb"},{"id":"m-7on6k8","iso":"2026-10-22","via":"ing","amt":-550,"who":"Anish Das Ayon"}],"trackStart":"2026-10","cars":[{"id":"c1","plate":"LOW4CT","name":"","use":"personal","renter":"","regoExpiry":"2026-11-30","regoMonths":3,"serviceEvery":10000,"odo":null,"lastServiceKm":null,"insExpiry":""},{"id":"c2","plate":"ZXL012","name":"","use":"personal","renter":"","regoExpiry":"2027-01-30","regoMonths":3,"serviceEvery":10000,"odo":null,"lastServiceKm":null,"insExpiry":""},{"id":"c3","plate":"YII138","name":"","use":"rented","renter":"Badhon Sarkar Dip","regoExpiry":"2026-11-24","regoMonths":3,"serviceEvery":10000,"odo":null,"lastServiceKm":null,"insExpiry":""},{"id":"c4","plate":"1XX6WN","name":"","use":"rented","renter":"Apurba Deb","regoExpiry":"2026-11-25","regoMonths":3,"serviceEvery":10000,"odo":null,"lastServiceKm":null,"insExpiry":""}],"v":5,"undo":null,"lastVia":"cash"};
 
 /* ---------- helpers ---------- */
 const pad=n=>String(n).padStart(2,'0');
@@ -137,7 +223,12 @@ const addDays=(s,k)=>fromN(toN(s)+k);
 const fmtD=s=>new Date(toN(s)*864e5).toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});
 const fmtDs=s=>new Date(toN(s)*864e5).toLocaleDateString('en-AU',{day:'numeric',month:'short',timeZone:'UTC'});
 const num=n=>Math.round(n).toLocaleString('en-AU');
-const money=n=>(n<0?'−$':'$')+num(Math.abs(n));
+let HIDE=false;try{HIDE=localStorage.getItem('dhiman-ledger-hide')==='1'}catch(e){}
+const money=n=>HIDE?'$•••':(n<0?'−$':'$')+num(Math.abs(n));
+const kmoney=n=>HIDE?'•••':Math.abs(n)>=1000?(n<0?'−':'')+'$'+(Math.abs(n)/1000).toFixed(1).replace(/\.0$/,'')+'k':money(n);
+let THEME='auto';try{THEME=localStorage.getItem('dhiman-ledger-theme')||'auto'}catch(e){}
+function applyTheme(){if(THEME==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=THEME}
+applyTheme();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid=p=>p+'-'+Math.random().toString(36).slice(2,8);
 const first=n=>String(n).trim().split(/\s+/)[0];
@@ -182,7 +273,7 @@ function migrate(d){
       d.houses.push(car);car.tenants.forEach(t=>d.rentPayments.push({id:uid('r'),t:t.id,h:car.id,due:t.anchor,amt:t.rent,via:'',iso:t.anchor,pre:true}));
     }
   }
-  d.bills=d.bills||[];d.carCosts=d.carCosts||[];d.moves=d.moves||[];d.trackStart=d.trackStart||'2026-10';
+  d.msgs=d.msgs||[];d.bills=d.bills||[];d.carCosts=d.carCosts||[];d.moves=d.moves||[];d.trackStart=d.trackStart||'2026-10';
   if(!d.cars){const c=(id,plate,use,rego,renter)=>({id,plate,name:'',use,renter:renter||'',regoExpiry:rego,regoMonths:3,serviceEvery:10000,odo:null,lastServiceKm:null,insExpiry:''});
     d.cars=[c('c1','LOW4CT','personal','2026-11-30'),c('c2','ZXL012','personal','2027-01-30'),c('c3','YII138','rented','2026-11-24','Badhon Sarkar Dip'),c('c4','1XX6WN','rented','2026-11-25','Apurba Deb')]}
   if((d.v||0)<5){
@@ -204,7 +295,7 @@ const paidOf=e=>e.payments.reduce((s,p)=>s+p.amt,0);
 const remOf=e=>e.amount-paidOf(e);
 function totals(){
   const assets=S.assets.reduce((s,a)=>s+a.amount,0);
-  const get=S.entries.filter(e=>e.side==='get').reduce((s,e)=>s+Math.max(0,remOf(e)),0);
+  const get=S.entries.filter(e=>e.side==='get').reduce((s,e)=>s+Math.max(0,remOf(e)),0)+allRentOver();
   const owe=S.entries.filter(e=>e.side==='owe').reduce((s,e)=>s+Math.max(0,remOf(e)),0);
   const cash=liquid().reduce((s,a)=>s+a.amount,0);
   return {assets,get,owe,cash,nw:assets+get-owe};
@@ -231,13 +322,21 @@ function houseDues(h,from,to){
     const pre=h.freq==='fortnight'?d<h.anchor:d<h.start;
     return {date:d,amt:h.rent,paid:!!p||pre,pay:p}});
 }
+const FREQ={week:{l:'week',n:'Weekly',m:52/12},fortnight:{l:'fortnight',n:'Fortnightly',m:26/12},month:{l:'month',n:'Monthly',m:1}};
+const tf=t=>FREQ[t.freq]?t.freq:'fortnight';
+const perMonth=t=>t.rent*FREQ[tf(t)].m;
+function stepDates(anchor,from,to,k){const a=toN(anchor),f=toN(from),t=toN(to);const out=[];for(let n=a+k*Math.ceil((f-a)/k);n<=t;n+=k)out.push(fromN(n));return out}
+function tDates(t,from,to){return tf(t)==='month'?monthDates(+t.anchor.slice(8,10),from,to):stepDates(t.anchor,from,to,tf(t)==='week'?7:14)}
+const wday=s=>new Date(toN(s)*864e5).toLocaleDateString('en-AU',{weekday:'long',timeZone:'UTC'});
+const schedText=t=>tf(t)==='month'?`on the ${+t.anchor.slice(8)}${ord(+t.anchor.slice(8))} each month`:tf(t)==='week'?`every ${wday(t.anchor)}`:`every 2nd ${wday(t.anchor)}`;
+function incomeText(ts){const fs=[...new Set(ts.map(tf))];if(fs.length<=1){return money(ts.reduce((s,t)=>s+t.rent,0))+' / '+FREQ[fs[0]||'fortnight'].l}return 'about '+money(ts.reduce((s,t)=>s+perMonth(t),0))+' / month'}
 function tenantDues(t,from,to){
-  return fortDates(t.anchor,from,to).map(d=>{const ps=S.rentPayments.filter(x=>x.t===t.id&&x.due===d);const pre=d<t.anchor;const got=pre?t.rent:ps.reduce((s,x)=>s+x.amt,0);
+  return tDates(t,from,to).map(d=>{const ps=S.rentPayments.filter(x=>x.t===t.id&&x.due===d);const pre=d<t.anchor;const got=pre?t.rent:ps.reduce((s,x)=>s+x.amt,0);
     return {date:d,amt:t.rent,got,left:Math.max(0,t.rent-got),paid:pre||got>=t.rent,pay:ps[0]}});
 }
 function tenantStatus(t){
   const today=todayISO();
-  const dues=tenantDues(t,t.anchor,addDays(today,28));
+  const dues=tenantDues(t,t.anchor,addDays(today,35));
   const over=dues.filter(x=>!x.paid&&x.date<=today);
   const next=dues.find(x=>!x.paid&&x.date>today);
   return {over,overAmt:over.reduce((s,x)=>s+x.left,0),next,unpaid:dues.filter(x=>!x.paid)};
@@ -263,9 +362,49 @@ function monthProfit(ym){
   return {rows,personal:S.carCosts.filter(c=>c.iso>=from&&c.iso<=to&&carOf(c).use!=='rented').reduce((s,c)=>s+c.amt,0),self:rows.filter(r=>r.h.self&&r.profit<0).reduce((s,r)=>s-r.profit,0),exp:sum('exp'),got:sum('got'),cost:sum('cost'),paid:sum('paid'),profit:sum('profit')};
 }
 function avgMonthly(){
-  const per=S.houses.map(h=>{const inc=h.tenants.reduce((s,t)=>s+t.rent,0)*26/12;const cost=h.freq==='fortnight'?h.rent*26/12:h.rent;return {h,inc,cost,p:inc-cost}});
+  const per=S.houses.map(h=>{const inc=h.tenants.reduce((s,t)=>s+perMonth(t),0);const cost=h.freq==='fortnight'?h.rent*26/12:h.rent;return {h,inc,cost,p:inc-cost}});
   return {per,total:per.reduce((s,x)=>s+x.p,0)};
 }
+
+const hue=n=>{let h=0;for(const c of String(n))h=(h*31+c.charCodeAt(0))%360;return h};
+const avRing=(n,pct,o)=>`<span class="ring${o?' o':''}" style="--p:${Math.round(pct)}">${av(n)}</span>`;
+const av=n=>{const p=String(n).trim().split(/\s+/);return `<span class="av" style="--h:${hue(n)}" aria-hidden="true">${esc((p[0]||'?')[0]+(p.length>1?p[p.length-1][0]:''))}</span>`};
+/* ---------- missed rent counts as money owed ---------- */
+const nk=n=>(n||'').toLowerCase().trim();
+function rentOwed(name){const k=nk(name),out=[];S.houses.forEach(h=>h.tenants.forEach(t=>{if(nk(t.name)!==k)return;tenantStatus(t).over.forEach(x=>out.push({h,t,date:x.date,left:x.left}))}));return out.sort((a,b)=>a.date<b.date?-1:1)}
+function rentPool(name){const k=nk(name),out=[];S.houses.forEach(h=>h.tenants.forEach(t=>{if(nk(t.name)!==k)return;tenantStatus(t).unpaid.forEach(x=>out.push({h,t,date:x.date,left:x.left}))}));return out.sort((a,b)=>a.date<b.date?-1:1)}
+const sumLeft=a=>a.reduce((s,x)=>s+x.left,0);
+const allRentOver=()=>S.houses.reduce((s,h)=>s+h.tenants.reduce((a,t)=>a+tenantStatus(t).overAmt,0),0);
+const totalOf=e=>Math.max(0,remOf(e))+(e.side==='get'?sumLeft(rentOwed(e.name)):0);
+function virtuals(){const have=new Set(S.entries.filter(e=>e.side==='get').map(e=>nk(e.name))),seen=new Set(),out=[];
+  S.houses.forEach(h=>h.tenants.forEach(t=>{const k=nk(t.name);if(have.has(k)||seen.has(k)||!tenantStatus(t).over.length)return;seen.add(k);out.push({id:'v-'+k.replace(/\W+/g,'-'),name:t.name,side:'get',amount:0,payments:[],virtual:true})}));return out}
+const getEntry=id=>S.entries.find(x=>x.id===id)||virtuals().find(x=>x.id===id);
+function owedByName(name){const e=S.entries.find(x=>x.side==='get'&&nk(x.name)===nk(name));return e?totalOf(e):sumLeft(rentOwed(name))}
+const hlRent=x=>`<span class="hl">${fmtDs(x.date)} ${x.h.kind==='car'?'car rent':'rent'} ${money(x.left)} added</span>`;
+function planGet(e,amt,mode){let rem=amt;const rent=[];
+  if(mode==='rent')(e.virtual?rentPool(e.name):rentOwed(e.name)).forEach(x=>{if(rem<=0)return;const a=Math.min(rem,x.left);rent.push({...x,amt:a});rem-=a});
+  let loan=0;if(rem>0&&!e.virtual){loan=Math.min(rem,Math.max(0,remOf(e)));rem-=loan}
+  if(rem>0){const used=new Set(rent.map(x=>x.t.id+x.date));rentPool(e.name).filter(x=>!used.has(x.t.id+x.date)).forEach(x=>{if(rem<=0)return;const a=Math.min(rem,x.left);rent.push({...x,amt:a});rem-=a})}
+  if(rem>0&&rent.length&&e.virtual)rent[rent.length-1].amt+=rem,rem=0;
+  return {rent,loan:Math.round(loan*100)/100,extra:Math.round(rem*100)/100}}
+
+/* ---------- payment receipt messages ---------- */
+const viaText=v=>!v?'':v==='offset'?'(taken off what I owe you)':(/cash/i.test(v)||/cash/i.test(accName(v)))?'in cash':`in my ${accName(v)} bank account`;
+const rentWhat=(h,due)=>h.kind==='car'?`for your car rent (due ${fmtDs(due)})`:`for your rent at ${h.address.split(',')[0]} (due ${fmtDs(due)})`;
+function receiptText(name,amt,via,iso,what){const left=owedByName(name);
+  return `Hi ${first(name)}, I have received $${num(amt)}${via?' '+viaText(via):''} on ${fmtD(iso)}${what?' '+what:''}. ${left>0?`You still owe me $${num(left)} in total.`:'You are all paid up now.'} Thank you!`}
+function statementText(e){const ro=e.side==='get'?rentOwed(e.name):[],loan=Math.max(0,remOf(e)),L=[];
+  L.push(`Hi ${first(e.name)}, here is what you owe me as of ${fmtD(todayISO())}:`);
+  if(!e.virtual&&e.amount)L.push(`Loan: $${num(loan)} left (total $${num(e.amount)}, you paid $${num(paidOf(e))})`);
+  ro.forEach(x=>L.push(`${x.h.kind==='car'?'Car rent':'Rent'} due ${fmtDs(x.date)}: $${num(x.left)}`));
+  L.push(`Total: $${num(totalOf(e))}`);
+  const ps=e.payments.slice(-5);if(ps.length)L.push('','Your last payments:',...ps.map(p=>`${fmtDs(p.iso)}: $${num(p.amt)}${p.via&&p.via!=='offset'?' ('+accName(p.via)+')':''}`));
+  L.push('','Thank you!');return L.join('\n')}
+function receiptSheet(name,text,title){const ph=phoneOf(name);
+  sheet(`<h2>${title||'Send receipt to '+esc(first(name))}</h2><div class="sub">${title?'':'Payment saved. '}Change the message if you want, then send it.</div>
+  <textarea class="rc" id="rcpt">${esc(text)}</textarea>
+  <div class="btns"><button class="btn pri" data-act="rcWa" data-name="${esc(name)}">WhatsApp</button><button class="btn" data-act="rcSms" data-name="${esc(name)}">SMS</button><button class="btn" data-act="rcCopy">Copy text</button><button class="btn" data-act="close" style="margin-left:auto">Done</button></div>
+  <div class="mut" style="font-size:12px;margin-top:8px">${ph?'Sends to '+esc(ph):'No phone saved for '+esc(first(name))+'. WhatsApp will ask you to pick the contact.'}</div>`)}
 
 /* ---------- reminders ---------- */
 const phoneOf=n=>S.contacts[(n||'').toLowerCase().trim()]||'';
@@ -276,14 +415,14 @@ function buildReminders(){
   S.houses.forEach(h=>h.tenants.forEach(t=>{const st=tenantStatus(t);
     if(st.over.length){const ds=st.over.map(x=>fmtDs(x.date)).join(', ');
       out.over.push({name:t.name,amt:st.overAmt,sub:`${h.name} · overdue since ${fmtDs(st.over[0].date)}`,
-        text:`Hi ${first(t.name)}, a friendly reminder that ${lbl(h,st.overAmt)} is overdue (due ${ds}). Please pay as soon as you can. Thanks!`})}
+        text:`Hi ${first(t.name)}, a friendly reminder that ${lbl(h,st.overAmt)} is overdue (due ${ds}).${owedByName(t.name)>st.overAmt?` With this, you owe me $${num(owedByName(t.name))} in total.`:''} Please pay as soon as you can. Thanks!`})}
     else if(st.next&&st.next.date<=soon){
       out.soon.push({name:t.name,amt:st.next.left,sub:`${h.name} · due ${fmtD(st.next.date)}`,
         text:`Hi ${first(t.name)}, just a reminder that ${lbl(h,st.next.left)} is due on ${fmtD(st.next.date)}. Thanks!`})}
   }));
-  S.entries.filter(e=>e.side==='get'&&remOf(e)>0).sort((a,b)=>remOf(b)-remOf(a)).forEach(e=>{
-    out.debts.push({name:e.name,amt:remOf(e),sub:e.payments.length?`Last paid ${fmtDs(e.payments[e.payments.length-1].iso)}`:'No payments yet',
-      text:`Hi ${first(e.name)}, hope you're well. Just a reminder that $${num(remOf(e))} is still outstanding. Please let me know when you can pay. Thanks!`})});
+  S.entries.filter(e=>e.side==='get'&&totalOf(e)>0).sort((a,b)=>totalOf(b)-totalOf(a)).forEach(e=>{const ro=sumLeft(rentOwed(e.name));
+    out.debts.push({name:e.name,amt:totalOf(e),sub:(e.payments.length?`Last paid ${fmtDs(e.payments[e.payments.length-1].iso)}`:'No payments yet')+(ro?` · includes ${money(ro)} rent`:''),
+      text:`Hi ${first(e.name)}, hope you're well. Just a reminder that $${num(totalOf(e))} is still outstanding${ro?` (this includes $${num(ro)} rent not paid)`:''}. Please let me know when you can pay. Thanks!`})});
   S.houses.forEach(h=>{const st=houseStatus(h);st.unpaid.filter(x=>x.date<=addDays(today,7)).forEach(x=>out.bills.push({h,d:x}))});
   return out;
 }
@@ -296,7 +435,7 @@ const ICONS={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1
  cars:'<path d="M5 12l1.8-4.6A1.5 1.5 0 0 1 8.2 6.4h7.6a1.5 1.5 0 0 1 1.4 1L19 12"/><rect x="3" y="12" width="18" height="5" rx="1.5"/><circle cx="7.5" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/>',
  remind:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
  more:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'};
-const TITLES={home:'Home',people:'People',houses:'Houses & Rent',cars:'Cars',remind:'Reminders',more:'Report & more'};
+const TITLES={home:'Home',people:'People',houses:'Houses',cars:'Cars',remind:'Reminders',more:'Report'};
 
 function renderTabs(){
   const r=buildReminders();const n=r.over.length+r.soon.length+carAlerts().filter(a=>a.cls!=='ok').length;
@@ -319,13 +458,15 @@ function vHome(){
   // group incoming rent by date+house to keep it short
   const g={};up.forEach(u=>{const k=u.in?u.d+'|'+u.s+'|'+(u.over?'o':''):u.d+'|'+u.t;if(!g[k])g[k]={...u,n:0,a:0,names:[]};g[k].a+=u.a;g[k].n++;g[k].names.push(first(u.t))});
   const ups=Object.values(g).sort((a,b)=>a.d<b.d?-1:1);
-  return `
+  const bd=S.lastBackup?toN(todayISO())-toN(S.lastBackup):null;
+  return `${bd===null||bd>=7?`<section><div class="bk-warn"><span>${bd===null?'You have never made a backup.':`Last backup was ${bd} days ago.`}</span><button class="btn sm" data-act="dlBackup">Back up now</button></div></section>`:''}
   <section><div class="hero"><div class="sub">Net worth</div><div class="big">${money(t.nw)}</div>
-    <div class="sub">${ch>=0?'+':'−'}$${num(Math.abs(ch))} ${pv?'since '+fmtDs(pv.d):''} · ${S.history.length} days tracked</div>${spark()}</div>
-    <div class="stats"><div class="stat"><span class="label">To collect</span><b class="pos">${money(t.get)}</b></div>
-    <div class="stat"><span class="label">I owe</span><b class="neg">${money(t.owe)}</b></div>
-    <div class="stat"><span class="label">Cash + bank</span><b>${money(t.cash)}</b></div></div>
-    <div class="quick"><button class="btn" data-tab="people">Got paid</button><button class="btn" data-tab="houses">Rent</button><button class="btn" data-tab="houses">Bills</button><button class="btn" data-tab="cars">Cars</button></div></section>
+    <div class="sub">${ch>=0?'+':'−'}${money(Math.abs(ch))} ${pv?'since '+fmtDs(pv.d):''} · ${S.history.length} days tracked</div>${spark()}</div>
+    <div class="stats"><div class="stat" style="--dot:var(--get)"><span class="label">To collect</span><b class="pos">${money(t.get)}</b>${allRentOver()?`<span class="hl" style="font-size:11px">${money(allRentOver())} rent missed</span>`:''}</div>
+    <div class="stat" style="--dot:var(--owe)"><span class="label">I owe</span><b class="neg">${money(t.owe)}</b></div>
+    <div class="stat" style="--dot:var(--accent)"><span class="label">Cash + bank</span><b>${money(t.cash)}</b></div></div>
+    <div class="quick"><button class="btn" data-tab="people">Got paid</button><button class="btn" data-tab="houses">Rent</button><button class="btn" data-tab="cars">Car rent</button><button class="btn" data-tab="houses">Bills</button></div></section>
+  ${vChart()}
   <section><div class="sec-h"><h2>Profit · ${new Date(toN(todayISO().slice(0,7)+'-01')*864e5).toLocaleDateString('en-AU',{month:'long',timeZone:'UTC'})}</h2><button class="btn sm" data-tab="houses">Details</button></div>
     <div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><div><span class="label">Expected profit</span><div style="font-family:var(--display);font-size:26px" class="${mp.profit>=0?'pos':'neg'}">${money(mp.profit)}</div></div>
     <div style="text-align:right;font-size:13px" class="mut">Money in ${money(mp.exp)}<br>Money out ${money(mp.cost)}</div></div>
@@ -334,19 +475,49 @@ function vHome(){
   <section><div class="sec-h"><h2>Accounts</h2><button class="btn sm" data-act="addAcc">Add account</button></div>
     <div class="list">${S.assets.map(a=>`<button class="row" data-act="acc" data-id="${a.id}"><div class="main"><div class="t">${esc(a.name)}</div><div class="s">${a.liquid?'Used for payments':'Investment'}${a.updated?' · updated '+fmtDs(a.updated):''}</div></div><div class="amt">${money(a.amount)}</div></button>`).join('')}</div></section>`;
 }
+function vChart(){const now=todayISO().slice(0,7),ks=[];const step=(k,n)=>{let [y,m]=k.split('-').map(Number);m+=n;while(m>12){m-=12;y++}while(m<1){m+=12;y--}return `${y}-${pad(m)}`};
+  for(let i=-3;i<=2;i++){const k=step(now,i);if(k>=S.trackStart)ks.push(k)}
+  const rows=ks.map(k=>{const p=monthProfit(k);return {k,inn:p.exp,out:p.cost,pr:p.profit,fut:k>now}});
+  const mx=Math.max(1,...rows.map(r=>Math.max(r.inn,r.out)));
+  return `<section><div class="sec-h"><h2>Month by month</h2><div class="legend"><span><i style="background:var(--get)"></i>Rent in</span><span><i style="background:var(--owe)"></i>Out</span></div></div>
+  <div class="card"><div class="chart" style="grid-template-columns:repeat(${rows.length},1fr)">${rows.map(r=>`<div class="col${r.k===now?' now':''}"><div class="bars" title="${monthLabel(r.k)}"${r.fut?' style="opacity:.45"':''}><i class="in" style="height:${r.inn/mx*100}%"></i><i class="out" style="height:${r.out/mx*100}%"></i></div>
+  <span>${new Date(toN(r.k+'-01')*864e5).toLocaleDateString('en-AU',{month:'short',timeZone:'UTC'})}${r.k===now?' · now':r.fut?' · expected':''}</span><b class="${r.pr>=0?'pos':'neg'}">${kmoney(r.pr)}</b></div>`).join('')}</div>
+  <div class="mut" style="font-size:12px;margin-top:8px">Bottom number is rent profit. Faded months are what you can expect if everyone pays.</div></div></section>`}
 function personRow(e){
   const r=remOf(e),p=paidOf(e),pc=e.amount?Math.min(100,p/e.amount*100):0;
+  const ro=e.side==='get'?rentOwed(e.name):[],tot=e.side==='get'?totalOf(e):Math.max(0,r);
   const last=e.payments[e.payments.length-1];
-  return `<div class="row"><button class="main rowbtn" data-act="person" data-id="${e.id}"><div class="t">${esc(e.name)}</div>
-  <div class="s">${r<=0?'<span class="pill ok">Settled</span>':last?`Paid ${money(p)} of ${money(e.amount)} · last ${fmtDs(last.iso)}${last.via?' via '+esc(accName(last.via)):''}`:`${money(e.amount)}${e.note?' · '+esc(e.note):''}`}</div>
-  ${p>0&&r>0?`<div class="bar"><i style="width:${pc}%"></i></div>`:''}</button><div class="amt ${e.side==='get'?'pos':'neg'}">${money(Math.max(0,r))}${r>0?`<div style="margin-top:4px"><button class="btn sm" data-act="pay" data-id="${e.id}">${e.side==='get'?'Got paid':'I paid'}</button></div>`:''}</div></div>`;
+  const sub=e.virtual?'Rent not paid':r<=0?(ro.length?'<span class="pill ok">Loan settled 🎉</span>':'<span class="pill ok">Settled 🎉</span>'):last?`Paid ${money(p)} of ${money(e.amount)} · last ${fmtDs(last.iso)}${last.via?' via '+esc(accName(last.via)):''}`:`${money(e.amount)}${e.note?' · '+esc(e.note):''}`;
+  return `<div class="row">${!e.virtual&&e.amount>0?avRing(e.name,pc,e.side!=='get'):av(e.name)}<button class="main rowbtn" data-act="person" data-id="${e.id}"><div class="t">${esc(e.name)}</div>
+  <div class="s">${sub}</div>${ro.length?`<div>${ro.map(hlRent).join('')}</div>`:''}
+  ${p>0&&r>0?`<div class="bar"><i style="width:${pc}%"></i></div>`:''}</button><div class="amt ${e.side==='get'?'pos':'neg'}">${money(tot)}${tot>0?`<div style="margin-top:4px"><button class="btn sm" data-act="pay" data-id="${e.id}">${e.side==='get'?'Got paid':'I paid'}</button></div>`:''}</div></div>`;
+}
+function peopleGroups(list){
+  if(!list.length)return '<div class="list"><div class="empty">No one found.</div></div>';
+  const get=peopleSide==='get',val=e=>get?totalOf(e):Math.max(0,remOf(e));
+  const g=get?[['Missed rent',list.filter(e=>val(e)>0&&rentOwed(e.name).length)],['Still owing',list.filter(e=>val(e)>0&&!rentOwed(e.name).length)]]:[['I still owe',list.filter(e=>val(e)>0)]];
+  const done=list.filter(e=>val(e)<=0);
+  const blk=(t,a)=>a.length?`<div class="grp"><h3>${t}</h3><span class="ct">${a.length} · ${money(a.reduce((s,e)=>s+val(e),0))}</span></div><div class="list">${a.map(personRow).join('')}</div>`:'';
+  return g.map(([t,a])=>blk(t,a)).join('')+(done.length?`<details class="fold"${q?' open':''}><summary class="grp"><h3><span class="chev">›</span> ${get?'Settled':'Paid back'}</h3><span class="ct">${done.length}</span></summary><div class="list" style="margin-top:12px">${done.map(personRow).join('')}</div></details>`:'');
+}
+let pSort='amount',pFilt='all';
+const isTenant=n=>S.houses.some(h=>h.tenants.some(t=>nk(t.name)===nk(n)));
+const lastPay=e=>{const ds=e.payments.map(p=>p.iso);S.houses.forEach(h=>h.tenants.filter(t=>nk(t.name)===nk(e.name)).forEach(t=>S.rentPayments.filter(p=>p.t===t.id&&!p.pre).forEach(p=>ds.push(p.iso))));return ds.sort().pop()||''};
+function peopleList(){
+  const base=S.entries.filter(e=>e.side===peopleSide).concat(peopleSide==='get'?virtuals():[]);
+  const val=e=>e.side==='get'?totalOf(e):Math.max(0,remOf(e));
+  const f=base.filter(e=>e.name.toLowerCase().includes(q.toLowerCase())&&(pFilt==='all'||(pFilt==='ten'?isTenant(e.name):!e.virtual&&e.amount>0)));
+  const cmp=pSort==='name'?(a,b)=>a.name.localeCompare(b.name):pSort==='recent'?(a,b)=>lastPay(b).localeCompare(lastPay(a)):(a,b)=>val(b)-val(a);
+  return f.sort(cmp);
 }
 function vPeople(){
   const t=totals();
-  const list=S.entries.filter(e=>e.side===peopleSide&&e.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>(remOf(b)>0)-(remOf(a)>0)||remOf(b)-remOf(a));
+  const list=peopleList();
   return `<section><div class="seg"><button data-side="get" class="${peopleSide==='get'?'on':''}">They owe me · ${money(t.get)}</button><button data-side="owe" class="${peopleSide==='owe'?'on':''}">I owe · ${money(t.owe)}</button></div>
   <input class="search" id="q" placeholder="Search name" value="${esc(q)}" autocomplete="off">
-  <div class="list" id="plist">${list.map(personRow).join('')||'<div class="empty">No one here yet.</div>'}</div>
+  <div class="chiprow"><span>Sort</span>${[['amount','Biggest'],['recent','Last paid'],['name','A–Z']].map(([k,l])=>`<button data-act="psort" data-v="${k}" class="${pSort===k?'on':''}">${l}</button>`).join('')}<span style="margin-left:6px">Show</span>${[['all','All'],['ten','Tenants'],['loan','Loans']].map(([k,l])=>`<button data-act="pfilt" data-v="${k}" class="${pFilt===k?'on':''}">${l}</button>`).join('')}</div>
+  ${peopleSide==='get'&&allRentOver()?`<div class="mut" style="font-size:12.5px">Missed house and car rent is added to what each person owes you. It shows as <span class="hl">highlighted</span>.</div>`:''}
+  <div id="plist" style="display:grid;gap:12px">${peopleGroups(list)}</div>
   <button class="btn pri wide" data-act="addPerson">Add person</button></section>`;
 }
 function vHouses(){
@@ -358,37 +529,66 @@ function vHouses(){
   ${mp.rows.map(r=>`<tr><td>${esc(r.h.name)}${r.h.self?'<div class="mut" style="font-size:11.5px">You live here</div>':''}</td><td>${money(r.exp)}</td><td>${money(r.cost)}</td><td class="${r.profit>=0?'pos':'neg'}">${money(r.profit)}</td></tr>`).join('')}
   </tbody><tfoot><tr><td>Total</td><td>${money(mp.exp)}</td><td>${money(mp.cost)}</td><td class="${mp.profit>=0?'pos':'neg'}">${money(mp.profit)}</td></tr></tfoot></table></div>
   ${mp.self>0?`<div style="font-size:13px;margin-top:8px">Felicity Drive, where you live, costs you ${money(mp.self)} this month. Without it, you make <b class="pos">${money(mp.profit+mp.self)}</b>.</div>`:''}<div class="mut" style="font-size:12.5px;margin-top:8px">${(b=>b?`Bonds you hold: <b style="color:var(--ink)">${money(b)}</b>, to pay back when people leave. `:'')(S.houses.reduce((s,h)=>s+h.tenants.reduce((a,t)=>a+(t.bond||0),0),0))}Money out includes bills and rented car costs. So far: collected ${money(mp.got)}, paid out ${money(mp.paid)}. Fortnightly rents land 2 or 3 times a month, so months differ. Average month from rent alone: <b class="${av.total>=0?'pos':'neg'}">${money(av.total)}</b>, before bills and car costs.${mp.personal?` Personal car costs this month: ${money(mp.personal)} (not in profit).`:''}</div></div></section>
-  ${S.houses.map(vHouse).join('')}
+  ${vCal()}
+  ${S.houses.filter(h=>h.kind!=='car').map(vHouse).join('')}
   <section><button class="btn wide" data-act="addHouse">Add house</button></section>`;
 }
+function calItems(from,to){const items=[],today=todayISO();
+  S.houses.forEach(h=>{h.tenants.forEach(t=>tenantDues(t,from,to).forEach(d=>{if(d.date<t.anchor)return;items.push({date:d.date,kind:'in',h,t,amt:d.amt,left:d.left,st:d.paid?'ok':d.date<=today?'bad':'n'})}));
+    houseDues(h,from,to).forEach(d=>items.push({date:d.date,kind:'out',h,amt:d.amt,st:d.paid?'ok':d.date<=today?'bad':'n'}))});return items}
+function vCal(){const [from,to]=monthRange(month),items=calItems(from,to),today=todayISO();
+  const [y,m]=month.split('-').map(Number),n=daysIn(y,m),lead=(new Date(Date.UTC(y,m-1,1)).getUTCDay()+6)%7;
+  const cells=[];for(let i=0;i<lead;i++)cells.push('<button class="empty" tabindex="-1"></button>');
+  for(let d=1;d<=n;d++){const ds=`${month}-${pad(d)}`,it=items.filter(x=>x.date===ds);
+    const dots=['bad','n','ok'].filter(st=>it.some(x=>x.st===st)).map(st=>`<i class="d-${st}"></i>`).join('');
+    cells.push(`<button data-act="calDay" data-d="${ds}" class="${ds===today?'today':''}" aria-label="${fmtD(ds)}, ${it.length} items">${d}<span class="dots">${dots}</span></button>`)}
+  const bad=items.filter(x=>x.st==='bad').length;
+  return `<section><div class="sec-h"><h2>Rent calendar</h2>${bad?`<span class="pill bad">${bad} missed</span>`:'<span class="pill ok">Nothing missed</span>'}</div><div class="card">
+  <div class="cal">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="wd">${w[0]}</div>`).join('')}${cells.join('')}</div>
+  <div class="legend" style="margin-top:10px;flex-wrap:wrap"><span><i class="d-ok"></i>Paid</span><span><i class="d-bad"></i>Missed</span><span><i class="d-n"></i>Coming up</span><span>Tap a day to see it</span></div></div></section>`}
+function calDaySheet(ds){const it=calItems(ds,ds);const tag={ok:'<span class="pill ok">Paid</span>',bad:'<span class="pill bad">Missed</span>',n:'<span class="pill n">Coming up</span>'};
+  sheet(`<h2>${fmtD(ds)}</h2><div class="sub">${it.length?`${it.length} payment${it.length>1?'s':''} on this day`:'Nothing due on this day'}</div>
+  <div class="list">${it.map(x=>x.kind==='in'?`<div class="row">${av(x.t.name)}<div class="main"><div class="t">${esc(x.t.name)}</div><div class="s">${x.h.kind==='car'?'Car rent':'Rent · '+esc(x.h.name)} · ${money(x.amt)} ${tag[x.st]}</div></div>${x.st!=='ok'?`<button class="btn sm" data-act="rentIn" data-h="${x.h.id}" data-id="${x.t.id}">Got paid</button>`:''}</div>`
+   :`<div class="row"><span class="hicon" style="width:38px;height:38px"><svg viewBox="0 0 24 24">${ICONS.houses}</svg></span><div class="main"><div class="t">You pay ${esc(x.h.name)}</div><div class="s">Landlord · ${money(x.amt)} ${tag[x.st]}</div></div>${x.st!=='ok'?`<button class="btn sm pri" data-act="payLandlord" data-id="${x.h.id}">Mark paid</button>`:''}</div>`).join('')||'<div class="empty">Free day.</div>'}</div>`)}
 function vHouse(h){
   const hs=houseStatus(h),today=todayISO();
-  const inc=h.tenants.reduce((s,t)=>s+t.rent,0);
+  const inc=h.tenants.reduce((s,t)=>s+perMonth(t),0)*12/26;
   const nx=hs.next;
-  return `<section><div class="card"><div class="house-h"><div><h3>${esc(h.name)}</h3><div class="s">${esc(h.address)}</div></div><button class="btn sm" data-act="editHouse" data-id="${h.id}">Edit</button></div>
+  const pm=h.tenants.reduce((s,t)=>s+perMonth(t),0),cm=h.freq==='fortnight'?h.rent*26/12:h.rent,owed=h.tenants.reduce((s,t)=>s+tenantStatus(t).overAmt,0);
+  return `<section><div class="card"><div class="house-h"><div style="display:flex;gap:12px;align-items:center;min-width:0"><span class="hicon"><svg viewBox="0 0 24 24">${ICONS.houses}</svg></span><div style="min-width:0"><h3>${esc(h.name)}</h3><div class="s">${esc(h.address)}${h.self?' · you live here':''}</div></div></div><button class="btn sm" data-act="editHouse" data-id="${h.id}">Edit</button></div>
+  <div class="kpis"><div class="kpi"><span>In / month</span><b class="pos">${money(pm)}</b></div><div class="kpi"><span>Out / month</span><b class="neg">${money(cm)}</b></div><div class="kpi"><span>${owed?'Missed':'Profit'}</span><b class="${owed?'neg':pm-cm>=0?'pos':'neg'}">${money(owed||pm-cm)}</b></div></div>
   ${h.rent>0?`<div class="landlord"><div><span class="label">You pay</span><div><b>${money(h.rent)}</b> ${h.freq==='fortnight'?'every 2nd Wednesday':'on the '+h.day+ord(h.day)+' monthly'}</div>
   <div style="font-size:12.5px" class="${nx&&nx.date<=today?'neg':'mut'}">${nx?(nx.date<=today?'Overdue: ':'Next: ')+fmtD(nx.date):'All paid'}${hs.unpaid.filter(x=>x.date<=today).length>1?` (${hs.over.length} unpaid)`:''}</div></div>
   ${nx?`<button class="btn sm pri" data-act="payLandlord" data-id="${h.id}">Mark paid</button>`:''}</div>`:''}
-  <div class="tenants">${h.tenants.map(t=>{const st=tenantStatus(t);
-    const pill=st.over.length?`<span class="pill bad">Owes ${money(st.overAmt)}</span>`:st.next?`<span class="pill ${toN(st.next.date)-toN(today)<=3?'soon':'ok'}">${toN(st.next.date)-toN(today)<=3?'Due '+fmtD(st.next.date):'Paid'}</span>`:'<span class="pill ok">Paid</span>';
-    return `<div class="row"><button class="main" style="background:none;border:0;padding:0;text-align:left" data-act="tenant" data-h="${h.id}" data-id="${t.id}"><div class="t">${esc(t.name)}</div><div class="s">${money(t.rent)} / fortnight · ${pill}</div></button>
-    <button class="btn sm" data-act="rentIn" data-h="${h.id}" data-id="${t.id}">Got paid</button></div>`}).join('')||'<div class="empty">No tenants yet.</div>'}</div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap"><span class="mut" style="font-size:12.5px">${h.kind==='car'?'Car rent':'Tenants pay'} ${money(inc)} / fortnight${h.self?` · your share ${money(Math.max(0,h.rent-inc))}`:''}</span><button class="btn sm" data-act="addTenant" data-h="${h.id}">${h.kind==='car'?'Add person':'Add tenant'}</button></div>
+  <div class="tenants">${h.tenants.map(t=>tenantRow(h,t)).join('')||'<div class="empty">No tenants yet.</div>'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap"><span class="mut" style="font-size:12.5px">Tenants pay ${incomeText(h.tenants)}${h.self?` · your share ${money(Math.max(0,h.rent-inc))} / fortnight`:''}</span><button class="btn sm" data-act="addTenant" data-h="${h.id}">Add tenant</button></div>
   ${h.kind==='car'?'':vBills(h)}
   </div></section>`;
 }
+function tenantRow(h,t){const st=tenantStatus(t),today=todayISO();
+  const pill=st.over.length?`<span class="pill bad">Owes ${money(st.overAmt)}</span>`:st.next?`<span class="pill ${toN(st.next.date)-toN(today)<=3?'soon':'ok'}">${toN(st.next.date)-toN(today)<=3?'Due '+fmtD(st.next.date):'Paid'}</span>`:'<span class="pill ok">Paid</span>';
+  return `<div class="row">${av(t.name)}<button class="main" style="background:none;border:0;padding:0;text-align:left" data-act="tenant" data-h="${h.id}" data-id="${t.id}"><div class="t">${esc(t.name)}</div><div class="s">${money(t.rent)} / ${FREQ[tf(t)].l} · ${pill}</div>${st.over.map(x=>hlRent({h,date:x.date,left:x.left})).join('')}</button>
+  <button class="btn sm" data-act="rentIn" data-h="${h.id}" data-id="${t.id}">Got paid</button></div>`}
+function vCarRent(){const h=S.houses.find(x=>x.kind==='car');if(!h)return '';
+  const over=h.tenants.reduce((s,t)=>s+tenantStatus(t).overAmt,0);
+  return `<section><div class="sec-h"><h2 style="display:flex;align-items:center;gap:10px"><span class="hicon"><svg viewBox="0 0 24 24">${ICONS.cars}</svg></span>Car rent</h2>${over?`<span class="pill bad">Owed ${money(over)}</span>`:'<span class="pill ok">Up to date</span>'}</div><div class="card">
+  <div class="mut" style="font-size:12.5px">Each person can pay weekly, fortnightly or monthly. Tap a name to change how often they pay.</div>
+  <div class="tenants">${h.tenants.map(t=>tenantRow(h,t)).join('')||'<div class="empty">No one rents a car yet.</div>'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap"><span class="mut" style="font-size:12.5px">Car rent in: ${incomeText(h.tenants)}</span><button class="btn sm" data-act="addTenant" data-h="${h.id}">Add renter</button></div>
+  </div></section>`}
 const ord=n=>(n%100>10&&n%100<14)?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th');
 function remItem(r,i,kind){
   const ph=phoneOf(r.name);
   return `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px"><div style="min-width:0"><b>${esc(r.name)}</b><div class="mut" style="font-size:12.5px">${esc(r.sub)}</div></div><b class="${kind==='soon'?'':'neg'}">${money(r.amt)}</b></div>
-  <div class="msg" id="m-${kind}-${i}">${esc(r.text)}</div>
-  <div class="btns">${ph?`<a class="btn sm pri" href="${waLink(ph,r.text)}" target="_blank" rel="noopener">WhatsApp</a><a class="btn sm" href="sms:${esc(ph)}?&body=${encodeURIComponent(r.text)}">SMS</a>`:`<button class="btn sm" data-act="phone" data-name="${esc(r.name)}">Add phone number</button><a class="btn sm" href="https://wa.me/?text=${encodeURIComponent(r.text)}" target="_blank" rel="noopener">WhatsApp</a>`}
+  <div class="msg" id="m-${kind}-${i}" data-real="${esc(r.text)}"${HIDE?' style="filter:blur(5px);user-select:none"':''}>${esc(HIDE?r.text.replace(/\$[\d,.]+/g,'$•••'):r.text)}</div>
+  <div class="btns">${ph?`<a class="btn sm pri" href="${waLink(ph,r.text)}" target="_blank" rel="noopener" data-msgwho="${esc(r.name)}" data-how="WhatsApp" data-text="${esc(r.text)}">WhatsApp</a><a class="btn sm" href="sms:${esc(ph)}?&body=${encodeURIComponent(r.text)}" data-msgwho="${esc(r.name)}" data-how="SMS" data-text="${esc(r.text)}">SMS</a>`:`<button class="btn sm" data-act="phone" data-name="${esc(r.name)}">Add phone number</button><a class="btn sm" href="https://wa.me/?text=${encodeURIComponent(r.text)}" target="_blank" rel="noopener">WhatsApp</a>`}
   <button class="btn sm" data-act="copy" data-src="m-${kind}-${i}">Copy text</button></div>
   ${ph?`<div class="mut" style="font-size:12px;margin-top:6px">${esc(ph)} · <button class="btn sm" style="padding:1px 6px" data-act="phone" data-name="${esc(r.name)}">Change</button></div>`:''}</div>`;
 }
 function vRemind(){
   const r=buildReminders();const ca=carAlerts();
-  return `<section><div class="sec-h"><h2>Cars</h2><span class="pill ${ca.some(a=>a.cls==='bad')?'bad':ca.length?'soon':'ok'}">${ca.length}</span></div><div class="list">${ca.map(a=>`<button class="row" data-tab="cars"><div class="main"><div class="t">${esc(a.c.plate)}</div><div class="s">${esc(carUse(a.c))}</div></div><span class="pill ${a.cls}">${esc(a.txt)}</span></button>`).join('')||'<div class="empty">No rego, service or insurance due in the next 30 days.</div>'}</div></section>
+  return `<section class="summary"><div class="chipbox"><span>Rent overdue</span><b class="${r.over.length?'neg':'pos'}">${money(r.over.reduce((x,y)=>x+y.amt,0))}</b></div><div class="chipbox"><span>Due in 3 days</span><b>${money(r.soon.reduce((x,y)=>x+y.amt,0))}</b></div><div class="chipbox"><span>To collect</span><b class="pos">${money(totals().get)}</b></div></section>
+  <section><div class="sec-h"><h2>Cars</h2><span class="pill ${ca.some(a=>a.cls==='bad')?'bad':ca.length?'soon':'ok'}">${ca.length}</span></div><div class="list">${ca.map(a=>`<button class="row" data-tab="cars"><div class="main"><div class="t">${esc(a.c.plate)}</div><div class="s">${esc(carUse(a.c))}</div></div><span class="pill ${a.cls}">${esc(a.txt)}</span></button>`).join('')||'<div class="empty">No rego, service or insurance due in the next 30 days.</div>'}</div></section>
   <section><div class="sec-h"><h2>Rent overdue</h2><span class="pill ${r.over.length?'bad':'ok'}">${r.over.length}</span></div>${r.over.map((x,i)=>remItem(x,i,'over')).join('')||'<div class="card empty">Everyone is up to date.</div>'}</section>
   <section><div class="sec-h"><h2>Rent due in 3 days</h2><span class="pill n">${r.soon.length}</span></div>${r.soon.map((x,i)=>remItem(x,i,'soon')).join('')||'<div class="card empty">No rent due in the next 3 days.</div>'}</section>
   <section><div class="sec-h"><h2>Your bills this week</h2></div><div class="list">${r.bills.map(b=>`<div class="row"><div class="main"><div class="t">${esc(b.h.name)} rent</div><div class="s">${fmtD(b.d.date)}</div></div><div class="amt neg">${money(b.d.amt)}</div></div>`).join('')||'<div class="empty">No landlord payments due this week.</div>'}</div></section>
@@ -396,16 +596,18 @@ function vRemind(){
   <p class="mut" style="font-size:12.5px">WhatsApp opens with the message filled in. You still tap Send there. SMS links may not open on every device; use Copy text if they don't.</p>`;
 }
 function vMore(){
-  return `${vReport()}${vPin()}<section><div class="sec-h"><h2>Undo</h2></div><div class="card">${S.undo?`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>Last change: <b>${esc(S.undo.label)}</b></span><button class="btn sm" data-act="undo">Undo</button></div>`:'<span class="mut">Nothing to undo.</span>'}</div></section>
+  return `${vReport()}<section><div class="sec-h"><h2>Look</h2></div><div class="card" style="display:grid;gap:10px"><div class="seg">${[['auto','Auto'],['light','Light'],['dark','Dark']].map(([k,l])=>`<button data-act="theme" data-v="${k}" class="${THEME===k?'on':''}">${l}</button>`).join('')}</div><span class="mut" style="font-size:12.5px">Auto follows your phone. Tap the eye at the top to hide all amounts.</span></div></section>${vPin()}<section><div class="sec-h"><h2>Undo</h2></div><div class="card">${S.undo?`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>Last change: <b>${esc(S.undo.label)}</b></span><button class="btn sm" data-act="undo">Undo</button></div>`:'<span class="mut">Nothing to undo.</span>'}</div></section>
   <section><div class="sec-h"><h2>Backup</h2></div><div class="card" style="display:grid;gap:10px">
   <span class="mut" style="font-size:13px">Data is saved in this browser only. Copy a backup and keep it in Notes or email it to yourself. Last backup: ${S.lastBackup?fmtD(S.lastBackup):'never'}.</span>
-  <div class="btns"><button class="btn pri" data-act="backup">Copy backup</button><label class="btn">Restore from file<input type="file" id="bkfile" accept=".json,application/json,text/plain" class="vh"></label><button class="btn" data-act="pasteRestore">Restore from text</button></div>
+  <div class="btns"><button class="btn pri" data-act="dlBackup">Download backup file</button><button class="btn" data-act="backup">Copy backup</button><label class="btn">Restore from file<input type="file" id="bkfile" accept=".json,application/json,text/plain" class="vh"></label><button class="btn" data-act="pasteRestore">Restore from text</button></div>
   <textarea class="bk" id="bktext" placeholder="Backup text appears here, or paste one to restore" spellcheck="false"></textarea></div></section>
   <section><div class="sec-h"><h2>Activity</h2></div><div class="list">${S.log.slice(0,80).map(l=>`<div class="row"><div class="main"><div class="t" style="font-weight:500;white-space:normal">${esc(l.text)}</div><div class="s">${new Date(l.iso).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div></div></div>`).join('')}</div></section>`;
 }
 function render(){
   document.getElementById('ttl').textContent=TITLES[tab];
-  document.getElementById('hnw').textContent=money(totals().nw);
+  const eye=document.getElementById('eye');eye.classList.toggle('on',HIDE);eye.setAttribute('aria-label',HIDE?'Show amounts':'Hide amounts');
+  eye.innerHTML=HIDE?'<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a17 17 0 0 1-2.6 3.3M6.5 7.6C4.3 9.2 3 12 3 12s4 6 9 6c1.5 0 2.9-.5 4.1-1.2"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>':'<svg viewBox="0 0 24 24"><path d="M3 12s4-6 9-6 9 6 9 6-4 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="3"/></svg>';
+  document.getElementById('when').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('warn').innerHTML=canSave?'':'<div class="save-warn">This browser is not saving changes. Copy a backup from More before you close the page.</div>';
   const v={home:vHome,people:vPeople,houses:vHouses,cars:vCars,remind:vRemind,more:vMore}[tab]();
   document.getElementById('view').innerHTML=v;renderTabs();
@@ -425,17 +627,46 @@ const amtF=(v,label='Amount')=>`<label>${label}<input name="amt" type="number" i
 const dateF=(v=todayISO(),label='Date',name='iso')=>`<label>${label}<input name="${name}" type="date" value="${v}" required></label>`;
 const actions=(save,extra='')=>`<div class="btns" style="margin-top:4px">${extra}<button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri" style="flex:1">${save}</button></div>`;
 
+let pTab='pay';
+function timelineHTML(e){const k=nk(e.name),ev=[];
+  if(!e.virtual){e.payments.forEach(p=>ev.push({iso:p.iso,t:`${e.side==='get'?'Paid you':'You paid'} ${money(p.amt)}${p.via?' · '+accName(p.via):''}`,c:'var(--get)'}));
+    S.moves.filter(m=>nk(m.who)===k).forEach(m=>ev.push({iso:m.iso,t:m.amt<0?`You lent ${money(-m.amt)}`:`You borrowed ${money(m.amt)}`,c:m.amt<0?'var(--owe)':'var(--warn)'}));
+    if(e.added)ev.push({iso:e.added,t:'Added to the ledger'+(e.note?' · '+e.note:''),c:'var(--muted)'})}
+  S.houses.forEach(h=>h.tenants.filter(t=>nk(t.name)===k).forEach(t=>{S.rentPayments.filter(p=>p.t===t.id&&!p.pre).forEach(p=>ev.push({iso:p.iso,t:`${h.kind==='car'?'Car rent':'Rent'} ${money(p.amt)} · ${h.name}${p.via?' · '+accName(p.via):''}`,c:'var(--get)'}));
+    tenantStatus(t).over.forEach(x=>ev.push({iso:x.date,t:`Missed ${h.kind==='car'?'car rent':'rent'} ${money(x.left)} · ${h.name}`,c:'var(--owe)'}))}));
+  S.msgs.filter(m=>nk(m.who)===k).forEach(m=>ev.push({iso:m.iso,t:`Message sent by ${m.how}`,x:m.text,c:'var(--accent)'}));
+  ev.sort((a,b)=>a.iso<b.iso?1:-1);
+  return `<span class="label">History</span>${ev.length?`<div class="tl">${ev.slice(0,60).map(v=>`<div class="ev" style="--tc:${v.c}"><div class="d">${fmtD(v.iso.slice(0,10))}</div><div style="font-weight:600">${esc(v.t)}</div>${v.x?`<div class="x">${esc(v.x.length>140?v.x.slice(0,140)+'…':v.x)}</div>`:''}</div>`).join('')}</div>`:'<div class="empty">Nothing yet.</div>'}`}
+function logMsg(name,how,text){S.msgs.unshift({who:name,how,text,iso:new Date().toISOString()});S.msgs=S.msgs.slice(0,300);save()}
 function personSheet(id){
-  const e=S.entries.find(x=>x.id===id);const r=remOf(e),get=e.side==='get';
-  sheet(`<h2>${esc(e.name)}</h2><div class="sub">${get?'Owes you':'You owe'} <b class="${get?'pos':'neg'}">${money(Math.max(0,r))}</b> of ${money(e.amount)}${e.note?' · '+esc(e.note):''}</div>
-  <div class="btns" style="margin-bottom:14px"><button class="btn pri" data-act="pay" data-id="${e.id}">${get?'Got paid':'I paid'}</button><button class="btn" data-act="more" data-id="${e.id}">${get?'Lend more':'Borrow more'}</button><button class="btn" data-act="editPerson" data-id="${e.id}">Edit</button>${get&&r>0?`<button class="btn" data-act="remindOne" data-id="${e.id}">Remind</button>`:''}</div>
-  <span class="label">Payments</span><div class="list" style="margin-top:6px">${e.payments.length?e.payments.map((p,i)=>({p,i})).reverse().map(({p,i})=>`<div class="row"><div class="main"><div class="t">${money(p.amt)}</div><div class="s">${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div>${p.via==='offset'?'':`<button class="btn sm" data-act="editPay" data-id="${e.id}" data-i="${i}">Change</button>`}<button class="btn sm dan" data-act="delPay" data-id="${e.id}" data-i="${i}">Remove</button></div>`).join(''):'<div class="empty">No payments yet.</div>'}</div>`);
+  const e=getEntry(id);const r=remOf(e),get=e.side==='get';const ro=get?rentOwed(e.name):[],roA=sumLeft(ro),tot=get?totalOf(e):Math.max(0,r);
+  sheet(`<h2>${esc(e.name)}</h2><div class="sub">${get?'Owes you':'You owe'} <b class="${get?'pos':'neg'}">${money(tot)}</b>${e.virtual?' in rent':` · loan ${money(Math.max(0,r))} of ${money(e.amount)}${roA?' + rent '+money(roA):''}`}${e.note?' · '+esc(e.note):''}</div>
+  <div class="btns" style="margin-bottom:14px">${tot>0?`<button class="btn pri" data-act="pay" data-id="${e.id}">${get?'Got paid':'I paid'}</button>`:''}${e.virtual?'':`<button class="btn" data-act="more" data-id="${e.id}">${get?'Lend more':'Borrow more'}</button><button class="btn" data-act="editPerson" data-id="${e.id}">Edit</button>${get&&tot>0?`<button class="btn" data-act="remindOne" data-id="${e.id}">Remind</button>`:''}`}${get&&tot>0?`<button class="btn" data-act="statement" data-id="${e.id}">Send statement</button>`:''}</div>
+  ${ro.length?`<span class="label">Rent not paid · added to total</span><div class="list" style="margin:6px 0 14px">${ro.map(x=>`<div class="row"><div class="main"><div class="t">${hlRent(x)}</div><div class="s">${esc(x.h.name)}</div></div><button class="btn sm" data-act="rentIn" data-h="${x.h.id}" data-id="${x.t.id}">Got paid</button></div>`).join('')}</div>`:''}
+  ${e.virtual?'':`<div class="seg" style="margin-bottom:12px"><button type="button" data-act="ptab" data-v="pay" data-id="${e.id}" class="${pTab==='pay'?'on':''}">Payments</button><button type="button" data-act="ptab" data-v="hist" data-id="${e.id}" class="${pTab==='hist'?'on':''}">History</button></div>`}
+  ${e.virtual||pTab==='hist'?timelineHTML(e):`<span class="label">Payments</span><div class="list" style="margin-top:6px">${e.payments.length?e.payments.map((p,i)=>({p,i})).reverse().map(({p,i})=>`<div class="row"><div class="main"><div class="t">${money(p.amt)}</div><div class="s">${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div>${get?`<button class="btn sm" data-act="rcPay" data-id="${e.id}" data-i="${i}">Msg</button>`:''}${p.via==='offset'?'':`<button class="btn sm" data-act="editPay" data-id="${e.id}" data-i="${i}">Change</button>`}<button class="btn sm dan" data-act="delPay" data-id="${e.id}" data-i="${i}">Remove</button></div>`).join(''):'<div class="empty">No payments yet.</div>'}</div>`}`);
 }
 function paySheet(id){
-  const e=S.entries.find(x=>x.id===id),get=e.side==='get';
-  sheet(`<h2>${get?esc(first(e.name))+' paid you':'You paid '+esc(first(e.name))}</h2><div class="sub">Still ${get?'owed':'to pay'}: ${money(remOf(e))}</div>
-  <form class="f">${amtF(Math.max(0,remOf(e)))}<div class="fld" style="font-size:14px;color:var(--ink)">${get?'How did they pay you? Bank or cash':'Paid from'}${viaChips()}</div>${dateF()}${actions('Save payment')}</form>`,
-  d=>{const amt=+d.amt;if(!amt)return;commit(`${get?e.name+' paid':'Paid '+e.name} ${num(amt)}${d.via?' · '+accName(d.via):''}`,()=>{e.payments.push({amt,iso:d.iso,via:d.via});adjust(d.via,get?amt:-amt)})});
+  const e=getEntry(id),get=e.side==='get';
+  const roA=get?sumLeft(rentOwed(e.name)):0,loan=Math.max(0,remOf(e)),total=get?loan+roA:remOf(e);
+  sheet(`<h2>${get?esc(first(e.name))+' paid you':'You paid '+esc(first(e.name))}</h2><div class="sub">Still ${get?'owed':'to pay'}: ${money(total)}${roA&&loan?` (rent ${money(roA)} + loan ${money(loan)})`:''}</div>
+  <form class="f">${amtF(Math.max(0,total))}
+  ${roA&&loan?`<div class="fld">Put this toward<div class="chips"><label><input type="radio" name="mode" value="rent" checked><span>Rent first, then loan</span></label><label><input type="radio" name="mode" value="loan"><span>Loan only</span></label></div></div>`:''}
+  <div class="fld" style="font-size:14px;color:var(--ink)">${get?'How did they pay you? Bank or cash':'Paid from'}${viaChips()}</div>${dateF()}${actions('Save payment')}</form>`,
+  d=>{const amt=+d.amt;if(!amt)return;
+    if(!get){commit(`Paid ${e.name} ${num(amt)}${d.via?' · '+accName(d.via):''}`,()=>{e.payments.push({amt,iso:d.iso,via:d.via});adjust(d.via,-amt)});
+      const left=Math.max(0,remOf(e));receiptSheet(e.name,`Hi ${first(e.name)}, I have sent you $${num(amt)}${d.via?(/cash/i.test(accName(d.via))?' in cash':' from my '+accName(d.via)+' account'):''} on ${fmtD(d.iso)}. ${left>0?`I still owe you $${num(left)}.`:'That clears what I owe you.'} Thank you!`,'Tell '+esc(first(e.name))+' you paid');return}
+    const wasLoan=!e.virtual&&remOf(e)>0;
+    const plan=planGet(e,amt,roA?(d.mode||'rent'):'loan');
+    if(plan.extra>0){toast(`That is ${money(plan.extra)} more than ${first(e.name)} owes. Check the amount.`);return}
+    const parts=[...plan.rent.map(x=>`${x.h.kind==='car'?'car rent':'rent'} ${num(x.amt)}`),plan.loan&&plan.rent.length?`loan ${num(plan.loan)}`:''].filter(Boolean);
+    commit(`${e.name} paid ${num(amt)}${parts.length?' ('+parts.join(' + ')+')':''}${d.via?' · '+accName(d.via):''}`,()=>{
+      plan.rent.forEach(x=>S.rentPayments.push({id:uid('r'),t:x.t.id,h:x.h.id,due:x.date,amt:x.amt,via:d.via,iso:d.iso}));
+      if(plan.loan)e.payments.push({amt:plan.loan,iso:d.iso,via:d.via});
+      adjust(d.via,amt)});
+    const what=plan.rent.length?`for your ${[...new Set(plan.rent.map(x=>(x.h.kind==='car'?'car rent ':'rent ')+'due '+fmtDs(x.date)))].join(', ')}${plan.loan?` and $${num(plan.loan)} off the loan`:''}`:'';
+    receiptSheet(e.name,receiptText(e.name,amt,d.via,d.iso,what));
+    if(wasLoan&&remOf(e)<=0){confetti();setTimeout(()=>toast(`${first(e.name)} has paid back everything 🎉`),300)}});
 }
 function moreSheet(id){
   const e=S.entries.find(x=>x.id===id),get=e.side==='get';
@@ -473,32 +704,35 @@ function rentInSheet(hid,tid){
   const {h,t}=findT(hid,tid);const st=tenantStatus(t);const opts=st.unpaid.slice(0,6);
   if(!opts.length){toast('Nothing unpaid');return}
   const debt=S.entries.find(e=>e.side==='owe'&&e.name.toLowerCase().trim()===t.name.toLowerCase().trim()&&remOf(e)>0);
-  sheet(`<h2>Rent from ${esc(first(t.name))}</h2><div class="sub">${esc(h.name)} · ${money(t.rent)} per fortnight</div>
-  <form class="f"><label>Which fortnight<select name="due">${opts.map(o=>`<option value="${o.date}">${fmtD(o.date)}${o.got?` (part paid, ${money(o.left)} left)`:o.date<=todayISO()?' (due)':''}</option>`).join('')}</select></label>
+  sheet(`<h2>${h.kind==='car'?'Car rent':'Rent'} from ${esc(first(t.name))}</h2><div class="sub">${esc(h.name)} · ${money(t.rent)} per ${FREQ[tf(t)].l}</div>
+  <form class="f"><label>Which payment<select name="due">${opts.map(o=>`<option value="${o.date}">${fmtD(o.date)}${o.got?` (part paid, ${money(o.left)} left)`:o.date<=todayISO()?' (due)':''}</option>`).join('')}</select></label>
   ${amtF(opts[0].left||t.rent)}<div class="mut" style="font-size:12px;margin-top:-6px">If they pay less than the full rent, the rest stays as owing.</div><div class="fld" style="font-size:14px;color:var(--ink)">How did they pay you? Bank or cash${viaChips()}${debt?`<div class="chips" style="margin-top:6px"><label><input type="radio" name="via" value="offset"><span>Take off what I owe ${esc(first(t.name))} (${money(remOf(debt))})</span></label></div>`:''}</div>${dateF()}${actions('Save rent')}</form>`,
   d=>{const amt=+d.amt;commit(`${t.name} paid rent ${num(amt)} (${fmtDs(d.due)})${d.via==='offset'?' · taken off what you owe':d.via?' · '+accName(d.via):''}`,()=>{const rid=uid('r');
     S.rentPayments.push({id:rid,t:t.id,h:h.id,due:d.due,amt,via:d.via,iso:d.iso});
-    if(d.via==='offset'&&debt)debt.payments.push({amt,iso:d.iso,via:'offset',rid});else adjust(d.via,amt)})});
+    if(d.via==='offset'&&debt)debt.payments.push({amt,iso:d.iso,via:'offset',rid});else adjust(d.via,amt)});
+    receiptSheet(t.name,receiptText(t.name,amt,d.via,d.iso,rentWhat(h,d.due)))});
 }
 function tenantSheet(hid,tid){
   const {h,t}=findT(hid,tid);const st=tenantStatus(t);
   const pays=S.rentPayments.filter(p=>p.t===t.id&&!p.pre).sort((a,b)=>a.due<b.due?1:-1);
-  sheet(`<h2>${esc(t.name)}</h2><div class="sub">${esc(h.name)}${t.bond?' · bond '+money(t.bond):''}${t.moveIn?' · since '+fmtDs(t.moveIn):''} · ${money(t.rent)} per fortnight (${new Date(toN(t.anchor)*864e5).toLocaleDateString('en-AU',{weekday:'long',timeZone:'UTC'})}s)${st.over.length?` · <b class="neg">owes ${money(st.overAmt)}</b>`:st.next?' · next '+fmtD(st.next.date):''}</div>
+  sheet(`<h2>${esc(t.name)}</h2><div class="sub">${esc(h.name)}${t.bond?' · bond '+money(t.bond):''}${t.moveIn?' · since '+fmtDs(t.moveIn):''} · ${money(t.rent)} per ${FREQ[tf(t)].l}, ${schedText(t)}${st.over.length?` · <b class="neg">owes ${money(st.overAmt)}</b>`:st.next?' · next '+fmtD(st.next.date):''}</div>
   <div class="btns" style="margin-bottom:14px"><button class="btn pri" data-act="rentIn" data-h="${h.id}" data-id="${t.id}">Got paid</button><button class="btn" data-act="editTenant" data-h="${h.id}" data-id="${t.id}">Edit</button></div>
-  <span class="label">Rent received</span><div class="list" style="margin-top:6px">${pays.map(p=>`<div class="row"><div class="main"><div class="t">${money(p.amt)} · fortnight of ${fmtDs(p.due)}</div><div class="s">Paid ${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div>${p.via==='offset'?'':`<button class="btn sm" data-act="editRent" data-id="${p.id}">Change</button>`}<button class="btn sm dan" data-act="delRent" data-id="${p.id}">Remove</button></div>`).join('')||'<div class="empty">No rent recorded in the app yet.</div>'}</div>`);
+  <span class="label">Rent received</span><div class="list" style="margin-top:6px">${pays.map(p=>`<div class="row"><div class="main"><div class="t">${money(p.amt)} · due ${fmtDs(p.due)}</div><div class="s">Paid ${fmtD(p.iso)} · ${p.via?esc(accName(p.via)):'<span class="pill soon">Method not set</span>'}</div></div><button class="btn sm" data-act="rcRent" data-id="${p.id}">Msg</button>${p.via==='offset'?'':`<button class="btn sm" data-act="editRent" data-id="${p.id}">Change</button>`}<button class="btn sm dan" data-act="delRent" data-id="${p.id}">Remove</button></div>`).join('')||'<div class="empty">No rent recorded in the app yet.</div>'}</div>`);
 }
 function editTenantSheet(hid,tid){
   const h=S.houses.find(x=>x.id===hid);const t=tid?h.tenants.find(x=>x.id===tid):null;
-  sheet(`<h2>${t?'Edit tenant':'Add tenant'}</h2><div class="sub">${esc(h.name)}</div>
+  const car=h.kind==='car',fq=t?tf(t):(car?'fortnight':'fortnight');
+  sheet(`<h2>${t?(car?'Edit renter':'Edit tenant'):(car?'Add car renter':'Add tenant')}</h2><div class="sub">${esc(h.name)}</div>
   <form class="f"><label>Name<input name="name" value="${esc(t?.name)}" required></label>
-  <div class="two">${amtF(t?.rent??'','Rent per fortnight')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(t?.name))}" placeholder="04xx xxx xxx"></label></div>
-  ${dateF(t?.anchor??todayISO(),'Last day they paid','anchor')}
+  <div class="fld">How often they pay<div class="chips">${Object.entries(FREQ).map(([k,v])=>`<label><input type="radio" name="freq" value="${k}" ${k===fq?'checked':''}><span>${v.n}</span></label>`).join('')}</div><span style="font-weight:500;font-size:12px">Monthly: due on the same day each month as the date below. If you change this, set the date below to the last due date they paid.</span></div>
+  <div class="two">${amtF(t?.rent??'','Rent each time')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(t?.name))}" placeholder="04xx xxx xxx"></label></div>
+  ${dateF(t?.anchor??todayISO(),'Last due date they paid','anchor')}
   <div class="two"><label>Bond you hold<input name="bond" type="number" inputmode="decimal" min="0" value="${t?.bond||''}" placeholder="0"></label><label>Move-in date<input name="movein" type="date" value="${t?.moveIn||''}"></label></div>
   ${actions(t?'Save':'Add tenant',t?`<button type="button" class="btn dan" data-act="delTenant" data-h="${h.id}" data-id="${t.id}">Remove</button>`:'')}</form>`,
-  d=>{const name=d.name.trim();commit(t?`Edited tenant ${name}`:`Added tenant ${name} to ${h.name}`,()=>{
+  d=>{const name=d.name.trim();commit(t?`Edited ${car?'renter':'tenant'} ${name} (${FREQ[d.freq].n.toLowerCase()})`:`Added ${car?'renter':'tenant'} ${name} to ${h.name} (${FREQ[d.freq].n.toLowerCase()})`,()=>{
     if(d.phone.trim())S.contacts[name.toLowerCase()]=d.phone.trim();
-    if(t){const moved=t.anchor!==d.anchor;Object.assign(t,{name,rent:+d.amt,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''});if(moved&&!S.rentPayments.some(p=>p.t===t.id&&p.due===d.anchor))S.rentPayments.push({id:uid('r'),t:t.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}
-    else{const nt={id:uid('t'),name,rent:+d.amt,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''};h.tenants.push(nt);S.rentPayments.push({id:uid('r'),t:nt.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}})});
+    if(t){const moved=t.anchor!==d.anchor;Object.assign(t,{name,rent:+d.amt,freq:d.freq,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''});if(moved&&!S.rentPayments.some(p=>p.t===t.id&&p.due===d.anchor))S.rentPayments.push({id:uid('r'),t:t.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}
+    else{const nt={id:uid('t'),name,rent:+d.amt,freq:d.freq,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''};h.tenants.push(nt);S.rentPayments.push({id:uid('r'),t:nt.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}})});
 }
 function payLandlordSheet(hid){
   const h=S.houses.find(x=>x.id===hid);const hs=houseStatus(h);
@@ -590,7 +824,7 @@ function vCars(){
   const personal=inM.filter(x=>carOf(x).use!=='rented').reduce((s,x)=>s+x.amt,0);
   const income=month<S.trackStart?0:S.houses.filter(h=>h.kind==='car').reduce((s,h)=>s+h.tenants.reduce((a,t)=>a+tenantDues(t,from,to).reduce((b,d)=>b+d.amt,0),0),0);
   const al=carAlerts();
-  return `<section><div class="card"><div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${monthLabel(month)}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
+  return `${vCarRent()}<section><div class="card"><div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${monthLabel(month)}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
   <div class="tablewrap" style="margin-top:10px"><table class="ptable"><tbody>
   <tr><td>Car rent in</td><td class="pos">${money(income)}</td></tr><tr><td>Rented car costs</td><td class="neg">${money(rentedCost)}</td></tr></tbody>
   <tfoot><tr><td>Car rent profit</td><td class="${income-rentedCost>=0?'pos':'neg'}">${money(income-rentedCost)}</td></tr></tfoot></table></div>
@@ -662,6 +896,20 @@ function flows(from,to){
 }
 const CAT_ORDER=['House rent in','Car rent in','Loans paid back to you','Money you borrowed','Landlord rent','House bills','Rented car costs','Personal car costs','Money you lent','You paid back loans'];
 function monthSum(ym){const [f,t]=monthRange(ym);const fl=flows(f,t);const inn=fl.filter(x=>x.amt>0).reduce((s,x)=>s+x.amt,0),out=-fl.filter(x=>x.amt<0).reduce((s,x)=>s+x.amt,0);return {fl,inn,out,net:inn-out}}
+function printMonth(){const old=HIDE;HIDE=false;try{
+  const ms=monthSum(month),mp=monthProfit(month),t=totals();
+  const cats=CAT_ORDER.map(c=>[c,ms.fl.filter(x=>x.cat===c).reduce((s,x)=>s+x.amt,0)]).filter(x=>x[1]);
+  const getL=S.entries.filter(e=>e.side==='get').concat(virtuals()).filter(e=>totalOf(e)>0).sort((a,b)=>totalOf(b)-totalOf(a));
+  const oweL=S.entries.filter(e=>e.side==='owe'&&remOf(e)>0);
+  document.getElementById('print').innerHTML=`<h1>Roy's Ledger · ${monthLabel(month)}</h1><div class="m">Made on ${fmtD(todayISO())}</div>
+  <h2>Summary</h2><div class="g"><div>Money in<b>${money(ms.inn)}</b></div><div>Money out<b>${money(ms.out)}</b></div><div>Net<b>${money(ms.net)}</b></div><div>Rent profit<b>${mp.before?'–':money(mp.profit)}</b></div></div>
+  <h2>Rent by house</h2><table><thead><tr><th>Source</th><th>Rent in</th><th>Costs</th><th>Profit</th></tr></thead><tbody>${mp.rows.map(r=>`<tr><td>${esc(r.h.name)}</td><td>${money(r.exp)}</td><td>${money(r.cost)}</td><td>${money(r.profit)}</td></tr>`).join('')}<tr><td><b>Total</b></td><td><b>${money(mp.exp)}</b></td><td><b>${money(mp.cost)}</b></td><td><b>${money(mp.profit)}</b></td></tr></tbody></table>
+  <h2>Money moved by type</h2><table><tbody>${cats.map(([c,v])=>`<tr><td>${c}</td><td>${money(v)}</td></tr>`).join('')||'<tr><td>Nothing recorded</td><td></td></tr>'}</tbody></table>
+  <h2>People who owe me · ${money(t.get)}</h2><table><tbody>${getL.map(e=>{const ro=sumLeft(rentOwed(e.name));return `<tr><td>${esc(e.name)}${ro?` <span class="m">(includes ${money(ro)} missed rent)</span>`:''}</td><td>${money(totalOf(e))}</td></tr>`}).join('')}</tbody></table>
+  <h2>I owe · ${money(t.owe)}</h2><table><tbody>${oweL.map(e=>`<tr><td>${esc(e.name)}</td><td>${money(remOf(e))}</td></tr>`).join('')||'<tr><td>Nothing</td><td></td></tr>'}</tbody></table>
+  <h2>Accounts · net worth ${money(t.nw)}</h2><table><tbody>${S.assets.map(a=>`<tr><td>${esc(a.name)}</td><td>${money(a.amount)}</td></tr>`).join('')}</tbody></table>`;
+  }finally{HIDE=old}
+  setTimeout(()=>window.print(),60)}
 function vReport(){
   const ms=monthSum(month);
   const cats=CAT_ORDER.map(c=>[c,ms.fl.filter(x=>x.cat===c).reduce((s,x)=>s+x.amt,0)]).filter(x=>x[1]);
@@ -671,7 +919,7 @@ function vReport(){
   if(other.length){const inn=other.filter(x=>x.amt>0).reduce((s,x)=>s+x.amt,0),out=-other.filter(x=>x.amt<0).reduce((s,x)=>s+x.amt,0);accs.push({n:'Other accounts',inn,out})}
   const months=[];let [y,m]=month.split('-').map(Number);for(let i=0;i<6;i++){months.unshift(`${y}-${pad(m)}`);m--;if(!m){m=12;y--}}
   const rows=months.map(k=>({k,...monthSum(k),p:monthProfit(k).profit}));const mx=Math.max(1,...rows.map(r=>Math.abs(r.net)));
-  return `<section><div class="sec-h"><h2>Monthly report</h2></div><div class="card" style="display:grid;gap:12px">
+  return `<section><div class="sec-h"><h2>Monthly report</h2><button class="btn sm pri" data-act="printMonth">Save as PDF</button></div><div class="card" style="display:grid;gap:12px">
   <div class="monthnav"><button class="btn sm" data-act="mprev" aria-label="Previous month">‹</button><b>${monthLabel(month)}</b><button class="btn sm" data-act="mnext" aria-label="Next month">›</button></div>
   <div class="stats"><div class="stat"><span class="label">Money in</span><b class="pos">${money(ms.inn)}</b></div><div class="stat"><span class="label">Money out</span><b class="neg">${money(ms.out)}</b></div><div class="stat"><span class="label">Net</span><b class="${ms.net>=0?'pos':'neg'}">${money(ms.net)}</b></div></div>
   <div><span class="label">By type</span><div class="tablewrap"><table class="ptable"><tbody>${cats.map(([c,v])=>`<tr><td>${c}</td><td class="${v>=0?'pos':'neg'}">${v>=0?'+':''}${money(v)}</td></tr>`).join('')||'<tr><td class="mut">Nothing recorded this month.</td><td></td></tr>'}</tbody></table></div></div>
@@ -681,24 +929,34 @@ function vReport(){
   </div></section>`;
 }
 
+function confetti(){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return}catch(e){}
+  const box=document.createElement('div');box.className='confetti';const cs=['#0F7A61','#FFD84D','#EF7C64','#49BE9C','#7AA7FF','#F2A541'];
+  for(let i=0;i<80;i++){const s=document.createElement('i');s.style.cssText=`left:${Math.random()*100}%;background:${cs[i%cs.length]};animation-delay:${(Math.random()*.5).toFixed(2)}s;animation-duration:${(1.7+Math.random()*1.2).toFixed(2)}s;width:${6+Math.random()*5|0}px`;box.appendChild(s)}
+  document.body.appendChild(box);setTimeout(()=>box.remove(),3600)}
 /* ---------- events ---------- */
 function toast(t){const el=document.getElementById('toast');el.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast.h);toast.h=setTimeout(()=>el.innerHTML='',2200)}
 async function copyText(t,ta){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){if(ta){ta.focus();ta.select()}toast('Select the text and copy it')}}
 function restore(txt){try{const d=JSON.parse(txt);if(!d.entries)throw 0;const snap=JSON.stringify({...S,undo:null});S=migrate(d);S.undo={label:'Restore backup',snap};save();render();toast('Backup restored')}catch(e){toast('That is not a valid backup')}}
 
 document.addEventListener('click',ev=>{
+  const ml=ev.target.closest('[data-msgwho]');if(ml)logMsg(ml.dataset.msgwho,ml.dataset.how,ml.dataset.text||'');
   const tb=ev.target.closest('[data-tab]');if(tb){tab=tb.dataset.tab;closeSheet();render();scrollTo(0,0);return}
   const sd=ev.target.closest('[data-side]');if(sd){peopleSide=sd.dataset.side;render();return}
   const el=ev.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id,h=el.dataset.h;
   if(a==='close'){if(el.classList.contains('scrim')&&ev.target!==el)return;closeSheet();return}
   ({
-    person:()=>personSheet(id),pay:()=>paySheet(id),more:()=>moreSheet(id),editPerson:()=>editPersonSheet(id),addPerson:()=>editPersonSheet(),
+    person:()=>{pTab='pay';personSheet(id)},ptab:()=>{pTab=el.dataset.v;personSheet(id)},
+    psort:()=>{pSort=el.dataset.v;render()},pfilt:()=>{pFilt=el.dataset.v;render()},
+    calDay:()=>calDaySheet(el.dataset.d),printMonth:()=>printMonth(),
+    hide:()=>{HIDE=!HIDE;try{localStorage.setItem('dhiman-ledger-hide',HIDE?'1':'0')}catch(e){}closeSheet();render();toast(HIDE?'Amounts hidden':'Amounts shown')},
+    theme:()=>{THEME=el.dataset.v;try{localStorage.setItem('dhiman-ledger-theme',THEME)}catch(e){}applyTheme();render()},
+    dlBackup:()=>{S.lastBackup=todayISO();save();const t=JSON.stringify(S);try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'application/json'}));a.download=`roys-ledger-backup-${todayISO()}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Backup file saved')}catch(e){copyText(t)}render()},pay:()=>paySheet(id),more:()=>moreSheet(id),editPerson:()=>editPersonSheet(id),addPerson:()=>editPersonSheet(),
     delPerson:()=>{const e=S.entries.find(x=>x.id===id);confirmSheet(`Delete ${e.name}?`,'Delete',()=>commit(`Deleted ${e.name}`,()=>S.entries=S.entries.filter(x=>x.id!==id)))},
     editPay:()=>{const e=S.entries.find(x=>x.id===id);methodSheet(e.payments[+el.dataset.i],e.side==='get'?1:-1,e.name,e.payments)},
     editRent:()=>{const p=S.rentPayments.find(x=>x.id===id);const t=S.houses.flatMap(h=>h.tenants).find(x=>x.id===p.t);methodSheet(p,1,t?t.name:'rent')},
     delPay:()=>{const e=S.entries.find(x=>x.id===id),i=+el.dataset.i,p=e.payments[i];confirmSheet(`Remove ${money(p.amt)} payment?`,'Remove',()=>commit(`Removed ${num(p.amt)} payment (${e.name})`,()=>{e.payments.splice(i,1);adjust(p.via,e.side==='get'?-p.amt:p.amt);if(p.rid)S.rentPayments=S.rentPayments.filter(x=>x.id!==p.rid)}))},
-    remindOne:()=>{const e=S.entries.find(x=>x.id===id);closeSheet();tab='remind';render();toast('Find '+first(e.name)+' under Money to collect')},
+    remindOne:()=>{const e=getEntry(id);closeSheet();tab='remind';render();toast('Find '+first(e.name)+' under Money to collect')},
     acc:()=>accSheet(id),addAcc:()=>accSheet(),
     delAcc:()=>{const x=S.assets.find(z=>z.id===id);confirmSheet(`Delete ${x.name}?`,'Delete',()=>commit(`Deleted account ${x.name}`,()=>S.assets=S.assets.filter(z=>z.id!==id)))},
     mprev:()=>{let[y,m]=month.split('-').map(Number);m--;if(!m){m=12;y--}month=`${y}-${pad(m)}`;render()},
@@ -714,7 +972,13 @@ document.addEventListener('click',ev=>{
     payLandlord:()=>payLandlordSheet(id),editHouse:()=>editHouseSheet(id),addHouse:()=>editHouseSheet(),
     delHouse:()=>{const x=S.houses.find(z=>z.id===id);confirmSheet(`Delete ${x.name}?`,'Delete',()=>commit(`Deleted house ${x.name}`,()=>S.houses=S.houses.filter(z=>z.id!==id)))},
     phone:()=>phoneSheet(el.dataset.name),
-    copy:()=>copyText(document.getElementById(el.dataset.src).textContent),
+    copy:()=>{const m=document.getElementById(el.dataset.src);copyText(m.dataset.real||m.textContent)},
+    rcWa:()=>{const t=document.getElementById('rcpt').value,ph=phoneOf(el.dataset.name);logMsg(el.dataset.name,'WhatsApp',t);window.open(ph?waLink(ph,t):'https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener')},
+    rcSms:()=>{const t=document.getElementById('rcpt').value,ph=phoneOf(el.dataset.name);logMsg(el.dataset.name,'SMS',t);location.href=`sms:${ph.replace(/\s/g,'')}?&body=${encodeURIComponent(t)}`},
+    rcCopy:()=>{const ta=document.getElementById('rcpt');copyText(ta.value,ta)},
+    rcPay:()=>{const e=getEntry(id),p=e.payments[+el.dataset.i];receiptSheet(e.name,receiptText(e.name,p.amt,p.via,p.iso,''))},
+    statement:()=>{const e=getEntry(id);receiptSheet(e.name,statementText(e),'Statement for '+esc(first(e.name)))},
+    rcRent:()=>{const p=S.rentPayments.find(x=>x.id===id);if(!p||!S.houses.some(x=>x.id===p.h))return;const r=findT(p.h,p.t);if(!r.t)return;receiptSheet(r.t.name,receiptText(r.t.name,p.amt,p.via,p.iso,rentWhat(r.h,p.due)))},
     undo:()=>undo(),
     pinOn:()=>pinSheet(),lockNow:()=>showLock(),
     pinOff:()=>confirmSheet('Turn off the PIN?','Turn off',()=>{pinHash=null;try{localStorage.removeItem(PINKEY)}catch(e){}closeSheet();render();toast('PIN is off')}),
@@ -723,15 +987,15 @@ document.addEventListener('click',ev=>{
   }[a]||(()=>{}))();
 });
 document.addEventListener('input',ev=>{if(ev.target.id==='q'){q=ev.target.value;const l=document.getElementById('plist');
-  const list=S.entries.filter(e=>e.side===peopleSide&&e.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>(remOf(b)>0)-(remOf(a)>0)||remOf(b)-remOf(a));
-  l.innerHTML=list.map(personRow).join('')||'<div class="empty">No match.</div>'}});
+  const list=peopleList();
+  l.innerHTML=peopleGroups(list)}});
 document.addEventListener('change',ev=>{if(ev.target.id==='bkfile'&&ev.target.files[0]){const r=new FileReader();r.onload=()=>restore(r.result);r.readAsText(ev.target.files[0])}});
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeSheet()});
 
 /* ---------- PIN lock ---------- */
 const PINKEY='dhiman-ledger-pin';let pinHash=null,pinBuf='';try{pinHash=localStorage.getItem(PINKEY)}catch(e){}
 function hpin(s){let h=2166136261;for(const c of 'dhiman-ledger:'+s+':pin'){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h.toString(16)}
-function showLock(){pinBuf='';document.getElementById('view').innerHTML='';document.getElementById('lock').innerHTML=`<div class="lock"><div><h2>Dhiman Ledger</h2><div class="mut" style="margin-top:4px">Enter your PIN</div><div class="dots" id="dots">${'<i></i>'.repeat(4)}</div>
+function showLock(){pinBuf='';document.getElementById('view').innerHTML='';document.getElementById('lock').innerHTML=`<div class="lock"><div><h2>Roy's Ledger</h2><div class="mut" style="margin-top:4px">Enter your PIN</div><div class="dots" id="dots">${'<i></i>'.repeat(4)}</div>
   <div class="pad">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(k=>k===''?'<span></span>':`<button type="button" data-pin="${k}" aria-label="${k==='del'?'Delete':k}">${k==='del'?'⌫':k}</button>`).join('')}</div>
   <button type="button" class="btn sm" data-pin="forgot">Forgot PIN</button></div></div>`}
 function pinPress(k){
