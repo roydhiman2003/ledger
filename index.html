@@ -1028,6 +1028,91 @@ nav.tabs button.on svg{background:var(--get-bg)!important;color:var(--accent)!im
 @keyframes rlFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .nomotion .rl-swap *{animation:none!important}
 @media (prefers-reduced-motion:reduce){.rl-swap *{animation:none!important}}
+/* ===== v11 · partial bill shares, daily P&L, name suggestions, motion polish ===== */
+.hint-box{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:13px;line-height:1.4}
+.hint-box .ci{width:18px;height:18px;flex:none;margin-top:1px;fill:none;stroke:var(--accent);stroke-width:2}
+.srow.part .s b{font-weight:700}
+.sh-bar{flex:1 1 100%;height:5px;border-radius:9px;background:var(--sunk);overflow:hidden;margin-top:2px}
+.sh-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--warn),var(--get));animation:barfill .8s cubic-bezier(.2,.8,.2,1) both}
+.sh-pays{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.sh-pay{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--sunk);border-radius:999px;padding:3px 4px 3px 10px}
+.sh-pay b{color:var(--get)}.sh-pay .btn.icon{width:22px;height:22px;min-width:0;padding:0;font-size:11px;box-shadow:none}
+.sh-live{font-size:13px;min-height:18px;margin-top:-4px}
+/* name suggestions */
+.nsug{display:grid;gap:6px;max-height:0;opacity:0;overflow:hidden;transition:max-height .32s cubic-bezier(.2,.8,.2,1),opacity .2s;margin-top:-4px}
+.nsug.on{max-height:420px;opacity:1}
+.nsug-l{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.nsug-list{display:grid;gap:6px}
+.nsug-i{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 10px;animation:nsIn .28s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*35ms);transition:transform .12s,border-color .15s,background .15s}
+.nsug-i:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}.nsug-i:active{transform:scale(.98);background:var(--sunk)}
+.nsug-i.in{opacity:.75}
+.nsug-av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--get-bg);color:var(--get);flex:none}
+.nsug-i.in .nsug-av{background:var(--sunk);color:var(--muted)}
+.nsug-t{display:grid;min-width:0}.nsug-t b{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nsug-t small{color:var(--muted);font-size:11.5px}
+.nsug-t mark{background:var(--hl-bg);color:var(--hl-ink);border-radius:3px;padding:0 1px}
+.nsug-warn{display:flex;align-items:center;gap:8px;background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:8px 10px;font-size:13px}
+.nsug-warn .ci{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;flex:none}.nsug-warn span{flex:1}.nsug-warn b{color:var(--ink)}
+@keyframes nsIn{from{opacity:0;transform:translateY(6px)}}
+/* daily profit & loss */
+.pnl{display:grid;gap:10px}
+.pnl-head{display:flex;justify-content:space-between;align-items:center}
+.pnl-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pnl-tile{border-radius:14px;padding:10px 12px;display:grid;gap:1px;border:1px solid var(--line);background:var(--surface);position:relative;overflow:hidden;animation:rise .4s cubic-bezier(.2,.8,.2,1) both}
+.pnl-tile:nth-child(2){animation-delay:.04s}.pnl-tile:nth-child(3){animation-delay:.08s}.pnl-tile:nth-child(4){animation-delay:.12s}
+.pnl-tile::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--get)}.pnl-tile.dn::before{background:var(--owe)}
+.pnl-tile span{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pnl-tile b{font-family:var(--display);font-size:18px;color:var(--get)}.pnl-tile.dn b{color:var(--owe)}
+.pnl-tile em{font-style:normal;font-size:11.5px;color:var(--muted)}
+.pnl-chart{background:var(--sunk);border-radius:14px;padding:10px 8px 6px}
+.pnl-chart svg{width:100%;height:104px;display:block;overflow:visible}
+.pnl-axis{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.pnl-bar{cursor:pointer;transform-box:fill-box;transform-origin:center bottom;animation:pnlGrow .55s cubic-bezier(.2,.9,.25,1.15) both;animation-delay:calc(var(--i)*22ms);transition:opacity .15s}
+.pnl-bar.up{fill:var(--get)}.pnl-bar.dn{fill:var(--owe);transform-origin:center top}
+.pnl-chart svg:has(.sel) .pnl-bar:not(.sel){opacity:.45}
+.pnl-bar.sel{stroke:var(--ink);stroke-width:1.5}
+@keyframes pnlGrow{from{transform:scaleY(0)}}
+.pnl-axislbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px}
+.pnl-pick{display:grid;gap:1px;border-radius:12px;padding:8px 12px;background:var(--get-bg);font-size:13px;animation:fadein .25s both}
+.pnl-pick.dn{background:var(--owe-bg)}.pnl-pick>b{font-size:13.5px}.pnl-pick span b{color:var(--get)}.pnl-pick.dn span b{color:var(--owe)}
+.pnl-stats{display:flex;flex-wrap:wrap;gap:6px}
+.pnl-stats span{font-size:11.5px;background:var(--sunk);border-radius:999px;padding:4px 9px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.pnl-stats i{width:7px;height:7px;border-radius:50%;background:var(--get)}.pnl-stats i.dn{background:var(--owe)}
+.pnl-list .pnl-row{flex-wrap:nowrap!important;animation:fadein .3s both}
+.pnl-list .pnl-row .main{min-width:0!important}
+.pnl-row.sel{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.pnl-row .amt small{font-size:11px;font-weight:600;opacity:.8}
+.pnl-dot{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:10px;flex:none;background:var(--get-bg);color:var(--get)}.pnl-dot.dn{background:var(--owe-bg);color:var(--owe)}
+.pnl-empty{display:grid;gap:4px;justify-items:center;text-align:center;padding:18px 12px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:13px}
+.pnl-empty .ci{width:28px;height:28px;fill:none;stroke:var(--accent);stroke-width:1.8}.pnl-empty b{color:var(--ink)}
+.pnl-home{display:grid;gap:10px;width:100%;text-align:left;margin:12px 0 0;padding:14px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(160deg,var(--surface),color-mix(in srgb,var(--accent) 6%,var(--surface)));box-shadow:0 10px 26px -20px rgba(0,0,0,.45);animation:rise .5s .1s cubic-bezier(.2,.8,.2,1) both;transition:transform .15s}
+.pnl-home:active{transform:scale(.985)}
+.ph-top{display:flex;align-items:center;gap:10px}.ph-top>div{display:grid;flex:1;min-width:0}.ph-top>div>b{font-size:14.5px}.ph-top>div>span{font-size:12.5px;color:var(--muted)}
+.ph-top em{font-style:normal;font-size:22px;color:var(--muted)}
+.ph-ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--get-bg);flex:none}.ph-ic .ci{width:20px;height:20px;fill:none;stroke:var(--get);stroke-width:2}
+.ph-bars{display:flex;align-items:flex-end;gap:4px;height:44px;padding:0 2px}
+.ph-bars i{flex:1;height:var(--h);border-radius:4px 4px 2px 2px;background:var(--get);opacity:.85;transform-origin:bottom;animation:pnlGrow .6s cubic-bezier(.2,.9,.25,1.15) both;animation-delay:calc(var(--i)*30ms + .2s)}
+.ph-bars i.dn{background:var(--owe)}
+.ph-foot{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}.ph-foot b{font-family:var(--display);font-size:16px}
+/* motion & feel polish */
+.scrim{animation:lgFade .25s ease-out both;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.sheet>*{animation:sIn .42s cubic-bezier(.2,.8,.2,1) both}
+.sheet>.phero{animation:sIn .42s cubic-bezier(.2,.8,.2,1) both,heroflow 14s ease .42s infinite}
+.sheet>*:nth-child(2){animation-delay:.03s}.sheet>*:nth-child(3){animation-delay:.06s}.sheet>*:nth-child(4){animation-delay:.09s}.sheet>*:nth-child(5){animation-delay:.12s}.sheet>*:nth-child(n+6){animation-delay:.15s}
+@keyframes sIn{from{opacity:0;transform:translateY(12px)}}
+.sheet .list>.row,.sheet .bcard{animation:fadein .35s cubic-bezier(.2,.8,.2,1) both}
+.sheet .list>.row:nth-child(2),.sheet .bcard:nth-of-type(2){animation-delay:.04s}.sheet .list>.row:nth-child(3),.sheet .bcard:nth-of-type(3){animation-delay:.08s}.sheet .list>.row:nth-child(n+4){animation-delay:.12s}
+.f input:not([type=radio]):not([type=checkbox]),.f select,.f textarea{transition:border-color .15s,box-shadow .2s}
+.f input:not([type=radio]):not([type=checkbox]):focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
+.btn{transition:transform .12s cubic-bezier(.2,.8,.2,1),box-shadow .15s,filter .15s}
+.btn:active{transform:scale(.96) translateY(1px)}
+.btn.pri:hover{filter:brightness(1.05)}
+.bcard{transition:transform .15s,box-shadow .2s}
+.list>button.row:active,.list>.row:active{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+nav.tabs button svg{transition:transform .25s cubic-bezier(.2,1.4,.4,1)}nav.tabs button:active svg{transform:scale(.85)}
+@media (prefers-reduced-motion:reduce){.sheet>*,.sheet .list>.row,.sheet .bcard,.pnl-bar,.ph-bars i,.pnl-tile,.pnl-home,.nsug-i{animation:none!important}}
+.nomotion .nsug{transition:none}
+.nsug-pick{justify-self:start;margin-top:-4px}.nsug-pick .ci{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.pnl.still *:not(.pnl-pick){animation:none!important}
 </style>
 
 <div class="wrap">
@@ -1199,7 +1284,7 @@ function monthProfit(ym){
   const [y,m]=ym.split('-').map(Number);const from=`${ym}-01`,to=`${ym}-${pad(daysIn(y,m))}`;
   const rows=S.houses.map(h=>{
     let exp=0,got=0;h.tenants.forEach(t=>tenantDues(t,from,to).forEach(d=>{exp+=d.amt;got+=d.got}));
-    shareDues(h.id,from,to).forEach(x=>{exp+=x.amt;if(x.got)got+=x.got.amt});
+    shareDues(h.id,from,to).forEach(x=>{exp+=x.amt;got+=Math.min(x.amt,x.paid)});
     let cost=0,paid=0;houseDues(h,from,to).forEach(d=>{cost+=d.amt;paid+=d.got});
     const inM=x=>x.iso>=from&&x.iso<=to;let bills=S.bills.filter(b=>b.h===h.id&&inM(b)).reduce((s,b)=>s+b.amt,0);
     if(h.kind==='car')bills+=S.carCosts.filter(c=>inM(c)&&carOf(c).use==='rented').reduce((s,c)=>s+c.amt,0);
@@ -1387,6 +1472,7 @@ const IC={cart:'<path d="M3 4h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0
  check:'<path d="M4 12.5l5 5L20 6.5"/>',
  file:'<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
+IC.chart='<path d="M4 4v15h16"/><path d="M7.5 14.5l3.5-4 3 2.5 5-6"/>';
 const ic=n=>`<svg class="ci" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||IC.box}</svg>`;
 const SPEND=[['Groceries',ic('cart')],['Fuel',ic('fuel')],['Food & drinks',ic('food')],['Tuition',ic('cap')],['Shopping',ic('bag')],['Phone & internet',ic('phone')],['Transport',ic('bus')],['Health',ic('health')],['Send home',ic('send')],['Fun',ic('film')],['Bills',ic('receipt')],['Other spending',ic('box')]];
 const INCOME=[['Salary',ic('brief')],['Refund',ic('refund')],['Gift',ic('gift')],['Other income',ic('coins')]];
@@ -1721,6 +1807,7 @@ function royHero(){
    <div class="rl-hero-tail"><div class="rl-tailbox"><span><i class="dot" style="background:#5EE0A8"></i>Cash</span><b>${money(cashOnly())}</b></div><div class="rl-tailbox"><span><i class="dot" style="background:#7FB2FF"></i>Bank</span><b>${money(bankOnly())}</b></div>${S.assets.filter(a=>!a.liquid).map(a=>`<div class="rl-tailbox"><span><i class="dot" style="background:${isShare(a)?'#DBEC9F':'#C4B5FD'}"></i>${esc(a.name)}</span><b>${money(a.amount)}</b></div>`).join('')}</div>
   </div>
   <div class="rl-statgrid">${stats.map(x=>`<div class="rl-stat" style="--tint:${x.tint};--shade:${x.bg};--color:${x.color}"><div class="rl-ico">${royMoneyIcon(x.id)}</div><span class="label">${x.name}</span><b>${money(x.val)}</b><small>${x.foot}</small></div>`).join('')}</div>
+  ${pnlHomeCard()}
   <div class="rl-actionwrap"><div class="rl-actionhead"><b>Move money, effortlessly</b><span>Quick actions</span></div>
     <div class="rl-actions">
     <button type="button" class="rl-action" data-tab="people"><span class="rl-actionicon" style="--a-bg:#E2F4E7;--a-color:#18876C">${QI.in}</span>Receive</button>
@@ -1909,7 +1996,7 @@ function oweStatementText(e){const L=[],k=nk(e.name);
 function editPersonSheet(id){
   const e=id?S.entries.find(x=>x.id===id):null;
   sheet(`<h2>${e?'Edit '+esc(first(e.name)):'Add person'}</h2><div class="sub">${e?'Change details. Balances in accounts stay the same.':'Someone you lent to or borrowed from'}</div>
-  <form class="f"><label>Name<input name="name" value="${esc(e?.name)}" required></label>
+  <form class="f"><label>Name<input name="name" value="${esc(e?.name)}" required autocomplete="off" autocapitalize="words" spellcheck="false"></label>${e?'':'<div class="nsug" id="nsug" aria-live="polite"></div>'}
   <div class="fld">Type<div class="chips"><label><input type="radio" name="side" value="get" ${(!e||e.side==='get')?'checked':''}><span>They owe me</span></label><label><input type="radio" name="side" value="owe" ${e?.side==='owe'?'checked':''}><span>I owe them</span></label></div></div>
   <div class="two">${amtF(e?.amount??'','Total amount')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(e?.name))}" placeholder="04xx xxx xxx"></label></div>
   ${e?'':`<div class="fld">Money moved via${viaChips('via','')}</div>`}
@@ -1921,7 +2008,32 @@ function editPersonSheet(id){
       if(e){renamePerson(e.name,name);e.name=name;e.side=d.side;e.amount=amt;e.note=d.note.trim()||undefined}
       else{S.entries.push({id:uid('p'),name,side:d.side,amount:amt,payments:[],note:d.note.trim()||undefined,added:todayISO()});adjust(d.via,d.side==='get'?-amt:amt);if(amt)S.moves.push({id:uid('m'),iso:todayISO(),via:d.via,amt:d.side==='get'?-amt:amt,who:name})}});
     if(!e&&amt>0)moveMsgSheet(name,d.side==='get',amt,d.via,todayISO())});
+  if(!e)nameSuggest(document.querySelector('#sheet form'));
 }
+/* name suggestions: everyone the ledger already knows — tenants, saved phones, past and deleted people, bill splits, messages */
+function knownPeople(){const M=new Map(),tc=t=>t.replace(/\b\w/g,c=>c.toUpperCase());
+  const add=(n,src,rank)=>{n=String(n||'').trim();if(!n||n.length<2||/^(me|you)$/i.test(n))return;const k=nk(n),o=M.get(k);if(!o)M.set(k,{name:n===n.toLowerCase()?tc(n):n,src,rank});else if(rank>o.rank){o.src=src;o.rank=rank}};
+  S.houses.forEach(h=>h.tenants.forEach(t=>add(t.name,h.kind==='car'?'Car renter':'Tenant · '+h.name,5)));
+  S.log.forEach(l=>{const m=l.text.match(/^(?:Deleted|Added) ([^(]+?)(?: \(|$)/);if(m&&!/^(account|tenant|renter)\b/i.test(m[1]))add(m[1],'Past person',3)});
+  (S.moves||[]).forEach(m=>add(m.who,'Lent or borrowed before',4));(S.msgs||[]).forEach(m=>add(m.who,'Messaged before',2));
+  [...S.bills,...S.recurring].forEach(b=>(b.split||[]).forEach(x=>add(x.name,'Bill split',2)));(S.shareIn||[]).forEach(x=>add(x.name,'Bill split',2));
+  Object.keys(S.contacts||{}).forEach(k=>add(k,'Saved phone',1));
+  S.entries.forEach(e=>{const o=M.get(nk(e.name));if(o){o.exists=e.id;o.name=e.name}else M.set(nk(e.name),{name:e.name,src:'In People',rank:0,exists:e.id})});
+  return [...M.values()].map(x=>({...x,phone:phoneOf(x.name)}))}
+function nameSuggest(f,house){const box=document.getElementById('nsug');if(!f||!box)return;const inp=f.name,here=house?new Set(house.tenants.map(t=>nk(t.name))):null;
+  const all=knownPeople().filter(x=>!here||!here.has(nk(x.name))).map(x=>house&&x.exists?{...x,exists:undefined,src:'In People',rank:4}:x);
+  const canPick=!!(navigator.contacts&&navigator.contacts.select);
+  if(canPick){const pb=document.createElement('button');pb.type='button';pb.className='btn sm nsug-pick';pb.innerHTML=ic('user')+' Pick from phone contacts';box.before(pb);
+    pb.addEventListener('click',async()=>{try{const [c]=await navigator.contacts.select(['name','tel'],{multiple:false});if(!c)return;const n=(c.name||[])[0],t=(c.tel||[])[0];if(n){inp.value=n;}if(t&&f.phone&&!f.phone.value)f.phone.value=t;draw()}catch(e){}})}
+  const score=(x,q)=>{const n=x.name.toLowerCase(),w=n.split(/\s+/);if(!q)return x.exists?-1:x.rank;if(n.startsWith(q))return 30+x.rank;if(w.some(t=>t.startsWith(q)))return 20+x.rank;if(n.includes(q))return 10+x.rank;const ini=w.map(t=>t[0]).join('');return ini.startsWith(q.replace(/\s/g,''))?5:-1};
+  const draw=()=>{const q=inp.value.trim().toLowerCase(),ex=all.find(x=>x.exists&&nk(x.name)===nk(inp.value));
+    const L=all.map(x=>({x,s:score(x,q)})).filter(o=>o.s>=0&&nk(o.x.name)!==nk(inp.value)).filter(o=>q||!o.x.exists).sort((a,b)=>b.s-a.s||a.x.name.localeCompare(b.x.name)).slice(0,q?6:4).map(o=>o.x);
+    const hl=n=>{if(!q)return esc(n);const i=n.toLowerCase().indexOf(q);return i<0?esc(n):esc(n.slice(0,i))+'<mark>'+esc(n.slice(i,i+q.length))+'</mark>'+esc(n.slice(i+q.length))};
+    box.innerHTML=(ex?`<div class="nsug-warn">${ic('user')}<span><b>${esc(ex.name)}</b> is already in People.</span><button type="button" class="btn sm" data-act="person" data-id="${esc(ex.exists)}">Open</button></div>`:'')+
+      (here&&here.has(nk(inp.value))?`<div class="nsug-warn">${ic('home')}<span><b>${esc(inp.value.trim())}</b> is already a tenant here.</span></div>`:'')+(L.length?`<span class="nsug-l">${q?'Matches':'People you know'}</span><div class="nsug-list">${L.map((x,i)=>`<button type="button" class="nsug-i${x.exists?' in':''}" data-n="${esc(x.name)}" style="--i:${i}"><span class="nsug-av">${esc(x.name.trim()[0]||'?')}</span><span class="nsug-t"><b>${hl(x.name)}</b><small>${esc(x.exists?'Already in People':x.src)}${x.phone?' · '+esc(x.phone):''}</small></span></button>`).join('')}</div>`:'');
+    box.classList.toggle('on',!!(L.length||ex||here&&here.has(nk(inp.value))))};
+  box.addEventListener('click',ev=>{const b=ev.target.closest('.nsug-i');if(!b)return;ev.preventDefault();inp.value=b.dataset.n;const ph=phoneOf(b.dataset.n);if(ph&&f.phone&&!f.phone.value)f.phone.value=ph;draw();(f.amt||inp).focus()});
+  inp.addEventListener('input',draw);inp.addEventListener('focus',draw);draw();setTimeout(()=>{try{inp.focus()}catch(e){}},260)}
 function accEditSheet(id){
   const a=id?S.assets.find(x=>x.id===id):null;
   sheet(`<h2>${a?esc(a.name):'Add account'}</h2><div class="sub">${a?'Set the real balance':'A bank, cash or investment'}</div>
@@ -1974,7 +2086,7 @@ function editTenantSheet(hid,tid){
   const h=S.houses.find(x=>x.id===hid);const t=tid?h.tenants.find(x=>x.id===tid):null;
   const car=h.kind==='car',fq=t?tf(t):(car?'fortnight':'fortnight');
   sheet(`<h2>${t?(car?'Edit renter':'Edit tenant'):(car?'Add car renter':'Add tenant')}</h2><div class="sub">${esc(h.name)}</div>
-  <form class="f"><label>Name<input name="name" value="${esc(t?.name)}" required></label>
+  <form class="f"><label>Name<input name="name" value="${esc(t?.name)}" required autocomplete="off" autocapitalize="words" spellcheck="false"></label>${t?'':'<div class="nsug" id="nsug" aria-live="polite"></div>'}
   <div class="fld">How often they pay<div class="chips">${Object.entries(FREQ).map(([k,v])=>`<label><input type="radio" name="freq" value="${k}" ${k===fq?'checked':''}><span>${v.n}</span></label>`).join('')}</div><span style="font-weight:500;font-size:12px">Monthly: due on the same day each month as the date below. If you change this, set the date below to the last due date they paid.</span></div>
   <div class="two">${amtF(t?.rent??'','Rent each time')}<label>Phone<input name="phone" type="tel" value="${esc(phoneOf(t?.name))}" placeholder="04xx xxx xxx"></label></div>
   ${t?`<label id="rfrom" class="rfrom" data-old="${t.rent}" hidden>New rent starts from (earlier dues keep ${money(t.rent)})<input name="rfrom" type="date" value="${(tenantStatus(t).next||{}).date||todayISO()}"></label>`:''}
@@ -1986,6 +2098,7 @@ function editTenantSheet(hid,tid){
     if(t&&+d.amt!==t.rent&&d.rfrom){t.prev=(t.prev||[]).filter(x=>x.until<=d.rfrom);t.prev.push({until:d.rfrom,rent:t.rent})}
     if(t){renamePerson(t.name,name);const moved=t.anchor!==d.anchor;Object.assign(t,{name,rent:+d.amt,freq:d.freq,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''});if(moved&&!S.rentPayments.some(p=>p.t===t.id&&p.due===d.anchor))S.rentPayments.push({id:uid('r'),t:t.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}
     else{const nt={id:uid('t'),name,rent:+d.amt,freq:d.freq,anchor:d.anchor,bond:+d.bond||0,moveIn:d.movein||''};h.tenants.push(nt);S.rentPayments.push({id:uid('r'),t:nt.id,h:h.id,due:d.anchor,amt:+d.amt,via:'',iso:d.anchor,pre:true})}})});
+  if(!t)nameSuggest(document.querySelector('#sheet form'),h);
 }
 function payLandlordSheet(hid){
   const h=S.houses.find(x=>x.id===hid);const hs=houseStatus(h);
@@ -2057,28 +2170,32 @@ const BILL_TYPES=['Electricity','Gas','Water','Internet','Council','Other'];
 const CAR_TYPES=['Rego','Service','Repair','Tyres','Insurance','Fuel','Other'];
 
 const bPaid=b=>b.paid!==false,bPayDate=b=>b.paidIso||b.iso;
-function payBillSheet(id){const b=S.bills.find(x=>x.id===id);if(!b)return;const h=S.houses.find(x=>x.id===b.h)||{};const sh=b.split?shareDues(b.h,b.iso,b.iso).filter(x=>x.r.id==='b:'+b.id):[],left=sh.filter(x=>!x.got).reduce((a,x)=>a+x.amt,0);
+function payBillSheet(id){const b=S.bills.find(x=>x.id===id);if(!b)return;const h=S.houses.find(x=>x.id===b.h)||{};const sh=b.split?shareDues(b.h,b.iso,b.iso).filter(x=>x.r.id==='b:'+b.id):[],left=r2(sh.reduce((a,x)=>a+x.rest,0));
   sheet(`<h2>Pay ${esc(b.type)} bill</h2><div class="sub">${esc(h.name||'')}${b.dueBy?' · due '+fmtD(b.dueBy):''}${left?` · ${m2(left)} still to collect from tenants`:sh.length?' · all shares collected':''}</div>
+  ${sh.length?`<div class="hint-box">${ic('receipt')}<span>This is <b>you paying the ${esc(b.type.toLowerCase())} company</b>. If a tenant gave you money, close this and tap <b>Got it</b> under their name. Part payments are fine there.</span></div>`:''}
   <form class="f">${amtF(b.amt)}<div class="fld" style="font-size:14px;color:var(--ink)">Paid from${viaPick()}</div>${dateF(todayISO(),'Date paid')}${actions('Mark paid')}</form>`,
   d=>{const ps=readParts(d,d.amt);if(!ps)return;const amt=sumP(ps);commit(`Paid ${b.type} bill ${n2(amt)} (${h.name||''})${pL(ps)}`,()=>{b.paid=undefined;b.paidIso=d.iso;b.via=ps[0].via;b.parts=ps.length>1?ps:undefined;b.amt=amt;ps.forEach(p=>adjust(p.via,-p.amt))})})}
 function billStats(h){const [from,to]=monthRange(month);const now=month===todayISO().slice(0,7);const bs=S.bills.filter(b=>b.h===h.id&&(b.iso>=from&&b.iso<=to||now&&!bPaid(b)&&b.iso<from));const unpaid=bs.filter(b=>!bPaid(b)&&!b.rec);
   const must=S.recurring.filter(r=>r.h===h.id).flatMap(r=>recDates(r,from,to).map(d=>({r,d,paid:!!recPaid(r,d)})));
-  const sh=shareDues(h.id,from,to),left=sh.filter(x=>!x.got).reduce((a,x)=>a+x.amt,0);
+  const sh=shareDues(h.id,from,to);bs.filter(b=>b.iso<from&&b.split&&b.split.length).forEach(b=>sh.push(...shareDues(h.id,b.iso,b.iso).filter(x=>x.r.id==='b:'+b.id&&!sh.some(y=>y.r.id===x.r.id&&nk(y.name)===nk(x.name)))));
+  /* bills from last month still show while unpaid or not fully collected */
+  if(now)S.bills.filter(b=>b.h===h.id&&b.iso<from&&bPaid(b)&&b.split&&b.split.length&&!bs.includes(b)).forEach(b=>{const x=shareDues(h.id,b.iso,b.iso).filter(y=>y.r.id==='b:'+b.id);if(x.some(y=>y.rest>=0.01)){bs.push(b);sh.push(...x)}});
+  const left=r2(sh.reduce((a,x)=>a+x.rest,0));
   return {bs,must,sh,left,unpaid,tot:bs.reduce((a,b)=>a+b.amt,0)+must.filter(m=>!m.paid).reduce((a,m)=>a+m.r.amt,0),due:[...must.filter(m=>!m.paid),...unpaid]}}
 function vBills(h){const st=billStats(h);
   return `<button class="billrow" data-act="billsOpen" data-h="${h.id}"><span class="tx-ic emo" style="--c:#9A6B00">${ic('receipt')}</span><div class="main"><div class="t">Bills · ${monthLabel(month)}</div><div class="s">${st.due.length?`<span class="neg">${st.due.length} to pay</span> · `:''}${st.bs.filter(bPaid).length} paid${st.left?` · <span class="pos">${m2(st.left)} to collect</span>`:''}</div></div><span class="amt">${m2(st.tot)} ›</span></button>`;
 }
 function billsSheet(hid){const h=S.houses.find(x=>x.id===hid);if(!h)return;const st=billStats(h);const [from,to]=monthRange(month);
-  const mustHTML=st.must.map(({r,d,paid})=>{const sh=st.sh.filter(x=>x.r.id===r.id&&x.date===d),mine=Math.max(0,r2(r.amt-recSplitSum(r))),left=sh.filter(x=>!x.got).reduce((a,x)=>a+x.amt,0);
+  const mustHTML=st.must.map(({r,d,paid})=>{const sh=st.sh.filter(x=>x.r.id===r.id&&x.date===d),mine=Math.max(0,r2(r.amt-recSplitSum(r))),left=r2(sh.reduce((a,x)=>a+x.rest,0));
     return `<div class="bcard"><div class="bc-h"><div><b>${esc(r.name)}</b><div class="mut">${m2(r.amt)} · ${fmtD(d)}${r.via?' · '+esc(accName(r.via)):''}</div></div>${paid?(pb=>`<div class="btns" style="flex-wrap:nowrap;align-items:center"><span class="pill ok">Paid</span>${pb?`<button class="btn sm dan icon" data-act="delBill" data-id="${pb.id}" aria-label="Remove this payment">✕</button>`:''}</div>`)(recPaid(r,d)):`<button class="btn sm pri" data-act="recPay" data-id="${r.id}" data-d="${d}">Pay</button>`}</div>
     ${sh.length?`<div class="bc-split"><span>Tenants ${m2(recSplitSum(r))}</span><span>You ${m2(mine)}</span><span class="${left?'pos':''}">${left?m2(left)+' to collect':'All collected'}</span></div>${sh.map(shareRow).join('')}
     <div class="btns"><button class="btn sm" data-act="groupMsg" data-id="${r.id}" data-d="${d}">Message group</button><button class="btn sm" data-act="recEdit" data-id="${r.id}">Edit split</button></div>`:''}</div>`}).join('');
-  const billHTML=st.bs.filter(b=>!b.rec).sort((a,b)=>a.iso<b.iso?1:-1).map(b=>{const sh=st.sh.filter(x=>x.r.id==='b:'+b.id),left=sh.filter(x=>!x.got).reduce((a,x)=>a+x.amt,0);
+  const billHTML=st.bs.filter(b=>!b.rec).sort((a,b)=>a.iso<b.iso?1:-1).map(b=>{const sh=st.sh.filter(x=>x.r.id==='b:'+b.id),left=r2(sh.reduce((a,x)=>a+x.rest,0));
     const pd=bPaid(b),dd=b.dueBy?daysTo(b.dueBy):null;
     return `<div class="bcard${pd?'':' unpaid'}"><div class="bc-h"><div><b>${esc(b.type)} ${m2(b.amt)}</b><div class="mut">${pd?`Paid ${fmtD(bPayDate(b))} · ${esc(viaLbl(b))}`:`Bill ${fmtDs(b.iso)}${b.dueBy?' · due '+fmtD(b.dueBy):''}`}${b.note?' · '+esc(b.note):''}</div>
     ${pd?'<span class="pill ok">Paid</span>':b.dueBy?`<span class="pill ${dd<0?'bad':dd<=5?'soon':'n'}">${dd<0?'Overdue '+(-dd)+' days':dd===0?'Due today':dd===1?'Due tomorrow':dd+' days left'}</span>`:'<span class="pill soon">Not paid</span>'}</div>
     <div class="btns" style="flex-wrap:nowrap">${pd?'':`<button class="btn sm pri" data-act="payBill" data-id="${b.id}">Pay</button>`}<button class="btn sm dan icon" data-act="delBill" data-id="${b.id}" aria-label="Remove">✕</button></div></div>
-    ${sh.length?`<div class="bc-split"><span>Split ${sh.length+(b.splitMe?1:0)} ways</span><span>${m2(sh[0].amt)} each</span><span class="${left?'pos':''}">${left?m2(left)+' to collect':'All collected'}</span></div>${sh.map(shareRow).join('')}<div class="btns"><button class="btn sm" data-act="groupMsg" data-id="b:${b.id}" data-d="${b.iso}">Message group</button></div>`:''}</div>`}).join('');
+    ${sh.length?`<div class="bc-split"><span>${(n=>n===1?'1 person':'Split '+n+' ways')(sh.length+(b.splitMe?1:0))}</span><span>${m2(sh[0].amt)} each</span><span class="${left?'pos':''}">${left?m2(left)+' to collect':'All collected'}</span></div>${sh.map(shareRow).join('')}<div class="btns"><button class="btn sm" data-act="groupMsg" data-id="b:${b.id}" data-d="${b.iso}">Message group</button></div>`:''}</div>`}).join('');
   sheet(`<h2>Bills · ${esc(h.name)}</h2><div class="sub">${monthLabel(month)}${st.left?' · '+m2(st.left)+' still to collect from tenants':''}</div>
   ${st.must.length?`<div class="label" style="margin:4px 0 6px">Must pay every month</div>${mustHTML}`:''}
   <div class="label" style="margin:12px 0 6px">Other bills this month</div>${billHTML||'<div class="empty" style="padding:8px 0">No water, gas or electricity bills yet.</div>'}
@@ -2192,8 +2309,11 @@ const recPaid=(r,d)=>(r.h?S.bills:S.expenses).find(x=>x.rec===r.id&&x.due===d);
 const recSplitSum=r=>(r.split||[]).reduce((s,x)=>s+x.amt,0);
 function splitSrc(id){if(String(id).startsWith('b:')){const b=S.bills.find(x=>x.id===id.slice(2));if(!b)return null;const h=S.houses.find(x=>x.id===b.h);return {id,name:b.type+(h?' · '+h.name:''),amt:b.amt,split:b.split,h:b.h,bill:b}}return S.recurring.find(x=>x.id===id)}
 function shareDues(hid,from,to){const out=[];
-  S.bills.filter(b=>b.split&&b.split.length&&(!hid||b.h===hid)&&b.iso>=from&&b.iso<=to).forEach(b=>{const r=splitSrc('b:'+b.id);b.split.forEach(p=>out.push({r,date:b.iso,name:p.name,amt:p.amt,got:S.shareIn.find(x=>x.rec===r.id&&nk(x.name)===nk(p.name))}))});S.recurring.filter(r=>r.split&&r.split.length&&(!hid||r.h===hid)).forEach(r=>recDates(r,from,to).forEach(d=>r.split.forEach(p=>{
-  const got=S.shareIn.find(x=>x.rec===r.id&&x.due===d&&nk(x.name)===nk(p.name));out.push({r,date:d,name:p.name,amt:p.amt,got})})));return out}
+  S.bills.filter(b=>b.split&&b.split.length&&(!hid||b.h===hid)&&b.iso>=from&&b.iso<=to).forEach(b=>{const r=splitSrc('b:'+b.id);b.split.forEach(p=>out.push(shareMk(r,b.iso,p,S.shareIn.filter(x=>x.rec===r.id&&nk(x.name)===nk(p.name)))))});S.recurring.filter(r=>r.split&&r.split.length&&(!hid||r.h===hid)).forEach(r=>recDates(r,from,to).forEach(d=>r.split.forEach(p=>{
+  out.push(shareMk(r,d,p,S.shareIn.filter(x=>x.rec===r.id&&x.due===d&&nk(x.name)===nk(p.name))))})));return out}
+/* a tenant can pay a bill share in parts: add up every payment, the share is only "Got" when nothing is left */
+function shareMk(r,date,p,pays){const paid=r2(pays.reduce((a,x)=>a+x.amt,0)),rest=Math.max(0,r2(p.amt-paid)),full=rest<0.01;
+  return {r,date,name:p.name,amt:p.amt,pays,paid,rest,part:!full&&paid>0,got:full&&pays.length?Object.assign({},pays[pays.length-1],{amt:paid}):null}}
 function payDays(from,to){const j=S.job;if(!j||!j.anchor)return [];return stepDates(j.anchor,from,to,14).filter(d=>d>=(j.start||j.anchor))}
 const payGot=d=>S.expenses.find(x=>x.kind==='in'&&x.payDue===d);
 function jobAvg(){const j=S.job;const a=[...(j.history||[]).map(x=>x.amt),...S.expenses.filter(x=>x.payDue).sort((p,q)=>p.iso<q.iso?-1:1).map(x=>x.amt)].slice(-6);
@@ -2222,7 +2342,7 @@ function planData(ym){
   const pace=isNow&&dayN>=7?spent/dayN*dim:0,past=ym<today.slice(0,7);
   const dayPred=past?spent:Math.max(spent,pace,S.dayBudget||0,S.dayBudget?0:lastSpent);
   const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
-  const inExp=sum(pays,p=>p.amt)+rentExp+sum(shares,s=>s.amt),inGot=sum(pays,p=>p.got?p.amt:0)+rentGot+sum(shares,s=>s.got?s.got.amt:0);
+  const inExp=sum(pays,p=>p.amt)+rentExp+sum(shares,s=>s.amt),inGot=sum(pays,p=>p.got?p.amt:0)+rentGot+sum(shares,s=>Math.min(s.amt,s.paid));
   const must=sum(outs,o=>o.amt)+otherBills,mustPaid=sum(outs.filter(o=>o.paid),o=>o.amt)+otherBills;
   const daysLeft=past?0:isNow?dim-dayN+1:dim;
   const payLeft=pays.filter(x=>!x.got).length,j=S.job;
@@ -2274,7 +2394,7 @@ function vPlan(){
   <div class="grp"><h3>Coming in</h3><span class="ct">${money(p.inExp)}</span></div>
   <div class="list">${payRows||`<div class="empty">No ${esc(j.name)} pay days set for this month.</div>`}
     <button class="row" data-tab="houses"><span class="tx-ic emo" style="--c:var(--get)">${ic('home')}</span><div class="main"><div class="t">Rent from tenants</div><div class="s">Collected ${money(p.rentGot)} of ${money(p.rentExp)}</div></div><div class="amt pos">+${money(p.rentExp)}</div></button></div>
-  ${shareHTML?`<div class="grp"><h3>Bill shares to collect</h3><span class="ct">${m2(p.shares.filter(s=>!s.got).reduce((a,s)=>a+s.amt,0))} left</span></div>${shareHTML}`:''}
+  ${shareHTML?`<div class="grp"><h3>Bill shares to collect</h3><span class="ct">${m2(p.shares.reduce((a,s)=>a+s.rest,0))} left</span></div>${shareHTML}`:''}
   <div class="grp"><h3>Day-to-day spending</h3><span class="ct">${money(p.spent)} spent</span></div>
   <div class="card rcats">${cats.map(([c,v])=>`<div class="rc-row"><span class="rc-ic out"><span class="emo">${CAT_EMO[c]||ic('box')}</span></span><div class="rc-main"><div class="rc-top"><b>${esc(c)}</b><span class="neg">−${m2(v)}</span></div><div class="rc-bar out"><i style="width:${Math.max(3,Math.round(v/ct*100))}%"></i></div></div></div>`).join('')||'<div class="empty">No fuel, groceries or other spending yet.</div>'}
     <div class="mut" style="font-size:12.5px">${dayNote}</div>
@@ -2295,15 +2415,18 @@ const nkh=t=>{let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(
 const NICK={'111qr3g':'Srabon','1cyls7r':'Akaash'};
 const nick=n=>NICK[nkh(nk(n))]||first(n);
 const r2=n=>Math.round(n*100)/100;
-function shareRow(s){return `<div class="row srow" style="padding-inline:0"><div class="main"><div class="t">${esc(nick(s.name))}</div><div class="s">${s.got?`Got ${fmtDs(s.got.iso)} · ${esc(viaLbl(s.got))}`:'Not paid yet'}</div></div><div class="amt pos">+${m2(s.amt)}</div>${s.got?`<span class="pill ok">Got</span><button class="btn sm dan icon" data-act="delShare" data-id="${s.got.id}" aria-label="Remove">✕</button>`:`<button class="btn sm icon" data-act="shareMsg" data-id="${s.r.id}" data-d="${s.date}" data-name="${esc(s.name)}" aria-label="Remind ${esc(nick(s.name))}" title="Remind">${QI.msg}</button><button class="btn sm pri" data-act="shareIn" data-id="${s.r.id}" data-d="${s.date}" data-name="${esc(s.name)}">Got it</button>`}</div>`}
+function shareRow(s){const pc=s.amt>0?Math.min(100,s.paid/s.amt*100):0;
+  const sub=s.got?`Got ${fmtDs(s.got.iso)} · ${esc(viaLbl(s.pays[s.pays.length-1]))}`:s.part?`Paid ${m2(s.paid)} of ${m2(s.amt)} · <b class="neg">${m2(s.rest)} left</b>`:'Not paid yet';
+  const hist=s.pays.length>(s.got?1:0)?`<div class="sh-pays">${s.pays.map(x=>`<span class="sh-pay"><b>${m2(x.amt)}</b> ${fmtDs(x.iso)} · ${esc(viaLbl(x))}<button class="btn sm dan icon" data-act="delShare" data-id="${x.id}" aria-label="Remove this payment">✕</button></span>`).join('')}</div>`:'';
+  return `<div class="row srow${s.part?' part':''}" style="padding-inline:0;flex-wrap:wrap"><div class="main"><div class="t">${esc(nick(s.name))}</div><div class="s">${sub}</div></div><div class="amt pos">${s.part?'+'+m2(s.rest):'+'+m2(s.amt)}</div>${s.got?`<span class="pill ok">Got</span>${s.pays.length===1?`<button class="btn sm dan icon" data-act="delShare" data-id="${s.pays[0].id}" aria-label="Remove">✕</button>`:''}`:`<button class="btn sm icon" data-act="shareMsg" data-id="${s.r.id}" data-d="${s.date}" data-name="${esc(s.name)}" aria-label="Remind ${esc(nick(s.name))}" title="Remind">${QI.msg}</button><button class="btn sm pri" data-act="shareIn" data-id="${s.r.id}" data-d="${s.date}" data-name="${esc(s.name)}">${s.part?'Got more':'Got it'}</button>`}${s.paid>0&&!s.got?`<div class="sh-bar"><i style="width:${pc.toFixed(1)}%"></i></div>`:''}${hist}</div>`}
 function groupText(id,due){const r=splitSrc(id);if(!r)return '';const h=S.houses.find(x=>x.id===r.h);const mine=Math.max(0,r2(r.amt-recSplitSum(r)));
   const bn=r.bill?r.bill.type:r.name.split(' · ')[0];const eq=r.split.every(x=>x.amt===r.split[0].amt)&&Math.abs(mine-r.split[0].amt)<0.02;
-  const paid=p=>(S.shareIn||[]).some(x=>x.rec===r.id&&nk(x.name)===nk(p.name)&&(r.bill||x.due===due));
-  const left=r.split.filter(p=>!paid(p)),done=r.split.length-left.length;
+  const paidOf=p=>r2((S.shareIn||[]).filter(x=>x.rec===r.id&&nk(x.name)===nk(p.name)&&(r.bill||x.due===due)).reduce((a,x)=>a+x.amt,0));
+  const left=r.split.map(p=>({...p,paid:paidOf(p),rest:Math.max(0,r2(p.amt-paidOf(p)))})).filter(p=>p.rest>=0.01),done=r.split.length-left.length;
   const head=`Hi everyone, the ${bn} bill${h?' for '+h.address.split(',')[0]:''} is $${r2(r.amt).toFixed(2)}${r.bill&&r.bill.note?' ('+r.bill.note+')':''}.${eq?` Split ${r.split.length+1} ways = $${r.split[0].amt.toFixed(2)} each.`:''}`;
   if(!left.length)return `${head}\n\nEveryone has paid their share. Thank you all!`;
   const by=r.bill?(r.bill.dueBy&&!bPaid(r.bill)?' before '+fmtD(addDays(r.bill.dueBy,-2))+' so I can pay it on time (due '+fmtDs(r.bill.dueBy)+')':''):due>todayISO()?' by '+fmtD(due):'';
-  return `${head}\n\nStill to pay:\n${left.map(x=>`${nick(x.name)}: $${x.amt.toFixed(2)}`).join('\n')}${done?'\n\nThank you to everyone who already paid.':''}\n\nPlease send your share${by}. Thanks!`}
+  return `${head}\n\nStill to pay:\n${left.map(x=>`${nick(x.name)}: $${x.rest.toFixed(2)}${x.paid>0?` (paid $${x.paid.toFixed(2)} of $${x.amt.toFixed(2)})`:''}`).join('\n')}${done?'\n\nThank you to everyone who already paid.':''}\n\nPlease send your share${by}. Thanks!`}
 function groupMsgSheet(id,due){const r=splitSrc(id);if(!r)return;const h=S.houses.find(x=>x.id===r.h);
   sheet(`<h2>Message the group</h2><div class="sub">People who already paid are left out. Change it if you want, then send it to your ${esc(h?h.name:'')} group.</div>
   <textarea class="rc" id="rcpt" rows="9">${esc(groupText(id,due))}</textarea>
@@ -2396,11 +2519,17 @@ function salPaySheet(due){const j=S.job,today=todayISO(),av=jobAvg();
       S.expenses.unshift({id:uid('e'),kind:'in',iso:d.iso,via:d.via,amt,cat:'Salary',note:`${j.name} pay`,payDue:due,hrs:hrs||undefined});if(d.via)j.via=d.via;adjust(d.via,amt)})});
   const h=document.querySelector('#sheet [name=hrs]'),a=document.querySelector('#sheet [name=amt]');if(h&&a)h.addEventListener('input',()=>{if(h.value!=='')a.value=Math.round(+h.value*j.rate*100)/100});
 }
-function shareInSheet(id,due,name){const r=splitSrc(id);const p=(r.split||[]).find(x=>nk(x.name)===nk(name));
-  sheet(`<h2>${esc(first(name))} paid bill share</h2><div class="sub">${esc(r.name)} · ${fmtD(due)}</div>
-  <form class="f">${amtF(p?p.amt:'')}<div class="fld" style="font-size:14px;color:var(--ink)">Went into${viaPick()}</div>${dateF()}${actions('Save')}</form>`,
-  d=>{const ps=readParts(d,d.amt);if(!ps)return;const amt=sumP(ps);commit(`${name} paid ${r.name} share ${n2(amt)}${pL(ps)}`,()=>{S.shareIn.push({id:uid('s'),rec:r.id,due,name,amt,via:ps[0].via,parts:ps.length>1?ps:undefined,iso:d.iso});ps.forEach(q=>adjust(q.via,q.amt))});
-    receiptSheet(name,`Hi ${first(name)}, I have received $${n2(amt)} ${viaText(ps.length>1?ps:ps[0].via)} on ${fmtD(d.iso)} for your share of the ${r.name} bill. Thank you!`.replace('  ',' '),'Tell '+esc(first(name)))});
+function shareInSheet(id,due,name){const r=splitSrc(id);if(!r)return;const p=(r.split||[]).find(x=>nk(x.name)===nk(name));
+  const pays=(S.shareIn||[]).filter(x=>x.rec===r.id&&nk(x.name)===nk(name)&&(r.bill||x.due===due)),before=r2(pays.reduce((a,x)=>a+x.amt,0)),share=p?p.amt:0,rest=Math.max(0,r2(share-before));
+  sheet(`<h2>${esc(first(name))} paid bill share</h2><div class="sub">${esc(r.name)} · ${fmtD(due)} · share ${m2(share)}${before?` · already paid ${m2(before)}`:''}</div>
+  <form class="f">${amtF(rest||'','Amount they paid now')}<div class="quickamt">${rest?`<button type="button" class="btn sm" data-act="fillAmt" data-v="${rest}">All ${m2(rest)}</button>`:''}${rest>=20?`<button type="button" class="btn sm" data-act="fillAmt" data-v="${r2(rest/2)}">Half ${m2(r2(rest/2))}</button>`:''}</div>
+  <div class="sh-live mut" id="shlive"></div><div class="fld" style="font-size:14px;color:var(--ink)">Went into${viaPick()}</div>${dateF()}${actions('Save')}</form>`,
+  d=>{const ps=readParts(d,d.amt);if(!ps)return;const amt=sumP(ps);if(!amt){toast('Enter an amount');return}
+    if(share&&amt>rest+0.009){toast(`That is more than ${first(name)} still owes (${m2(rest)}). Check the amount.`);return}
+    const left=Math.max(0,r2(rest-amt));
+    commit(`${name} paid ${r.name} share ${n2(amt)}${left?` (${n2(left)} left)`:''}${pL(ps)}`,()=>{S.shareIn.push({id:uid('s'),rec:r.id,due,name,amt,via:ps[0].via,parts:ps.length>1?ps:undefined,iso:d.iso});ps.forEach(q=>adjust(q.via,q.amt))});
+    receiptSheet(name,`Hi ${first(name)}, I have received $${n2(amt)} ${viaText(ps.length>1?ps:ps[0].via)} on ${fmtD(d.iso)} for your share of the ${r.name} bill. ${left?`You still owe $${left.toFixed(2)} for this bill.`:'Your share is fully paid now.'} Thank you!`.replace('  ',' '),'Tell '+esc(first(name)))});
+  const f=document.querySelector('#sheet form'),lv=document.getElementById('shlive');const upd=()=>{if(!f||!lv)return;const v=+f.amt.value||0;lv.innerHTML=!v?'':v>rest+0.009?`<b class="neg">More than the ${m2(rest)} left</b>`:v<rest-0.009?`After this: <b class="neg">${m2(r2(rest-v))} still left</b>`:'<b class="pos">This clears the share</b>'};if(f){f.addEventListener('input',upd);f.addEventListener('click',()=>setTimeout(upd,0));upd()}
 }
 function shareMsg(id,due,name){const r=splitSrc(id),p=(r.split||[]).find(x=>nk(x.name)===nk(name));
   receiptSheet(name,`Hi ${first(name)}, your share of the ${r.name} bill is $${m2(p?p.amt:0).replace('$','')} (${due>=todayISO()?'due':'was due'} ${fmtD(due)}). Thanks!`,'Remind '+esc(first(name)))}
@@ -2686,10 +2815,9 @@ function invPanel(a){const x=invInfo(a),L=x.L,v=invSeries(L,90),W=320,H=120;
   <div class="inv-today ${x.upToday?(x.day>=0?'up':'down'):'none'}"><span class="label">${x.dayLbl}${x.ref!==todayISO()?' · '+fmtDs(x.ref):''}</span>${x.upToday?`<b class="${x.day>=0?'pos':'neg'}">${x.day>=0?'Profit':'Loss'} ${sm(x.day)}</b><span>${x.dayPct!=null?pctS(x.dayPct):''}${x.m?' · '+x.m.txt:''}</span>`:`<b>${x.m&&x.m.open?'Market is open':'Not updated yet'}</b><span>${x.m&&x.m.open?'Update the value after 4pm when it closes':x.last?'Last value '+fmtDs(x.last.iso):'Type the value to start'}${x.m&&!x.m.open?' · '+x.m.txt:''}</span>`}</div>
   ${isShare(a)?`<div class="btns trade-btns"><button type="button" class="btn buy" data-act="trade" data-v="buy" data-id="${esc(a.id)}">${QI.in} Buy shares</button><button type="button" class="btn sell" data-act="trade" data-v="sell" data-id="${esc(a.id)}">${QI.out} Sell shares</button></div>`:''}<button type="button" class="btn pri wide" data-act="invUpd" data-id="${esc(a.id)}">${ic('pencil')} ${(x.upToday?'Change ':'Update ')+(x.dayLbl==='Today'?'today\'s':x.dayLbl+'\'s')} value</button>
   ${chart?`<div>${chart}</div>`:''}
-  <div class="sv-grid">${tile('Last 7 days',L.length?sm(x.w7):'–',L.length?(x.w7>=0?'pos':'neg'):'')}${tile('Last 30 days',L.length?sm(x.w30):'–',L.length?(x.w30>=0?'pos':'neg'):'')}</div>
+  <div class="pnl-head"><span class="label">Daily profit &amp; loss</span><button type="button" class="btn sm" data-act="pnlOpenOne" data-id="${esc(a.id)}">Full view ›</button></div>${pnlBlock(a.id)}
   <div class="row" style="background:var(--sunk);border-radius:12px"><div class="main"><div class="t">Total profit ${x.profit!=null?`<b class="${x.profit>=0?'pos':'neg'}">${sm(x.profit)}</b>${x.profitPct!=null?` <span class="mut" style="font-weight:500">(${pctS(x.profitPct)})</span>`:''}`:''}</div><div class="s">${x.put!=null?`Money put in ${money(x.put)} · transfers are added for you`:'Set the money you put in to see this'}</div></div><button type="button" class="btn sm" data-act="invBase" data-id="${esc(a.id)}">${x.put!=null?'Change':'Set'}</button></div>
   ${isShare(a)?tradeBox(a):''}
-  ${best?`<div class="mut" style="font-size:12px">Best day <b class="pos">${sm(gainOf(best))}</b> ${fmtDs(best.iso)} · Worst day <b class="neg">${sm(gainOf(worst))}</b> ${fmtDs(worst.iso)}</div>`:''}
   </div>`}
 function invBaseSheet(id){const a=S.assets.find(x=>x.id===id);if(!a)return;const x=invInfo(a);
   sheet(`<h2>Money put in · ${esc(a.name)}</h2><div class="sub">How much of your own money is in ${esc(a.name)} now in total. This is what you paid, not what it is worth. From now on, transfers in and out are added for you.</div>
@@ -2929,6 +3057,59 @@ function vPin(){return `<section><div class="sec-h"><h2>PIN lock</h2></div><div 
     c.style.transform=`perspective(900px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg) translateY(-3px)`;c.style.setProperty('--mx',((x+.5)*100).toFixed(1)+'%')})})();
 save();if(pinHash)showLock();else render();
 // Tideline audit build: mobile interface · 2026-11-07 · v3.21 (no built-in data)
+
+function wd3(d){return wday(d).slice(0,3)}
+/* ===== DAILY PROFIT & LOSS (investments) =====
+   Every value update is one day. The day's profit or loss is the change from the last value.
+   "Just fix" updates and transfers are never counted. */
+var pnlAcc='all',pnlAll=false,pnlSel=null;
+function pnlAccs(id){const A=invAccs();return !id||id==='all'?A:A.filter(a=>a.id===id)}
+function pnlDays(id){const A=pnlAccs(id),ids=A.map(a=>a.id),L=(S.valLog||[]).filter(x=>ids.includes(x.acc));
+  const by={};L.forEach(x=>{(by[x.iso]=by[x.iso]||[]).push(x)});
+  return Object.keys(by).sort().map(d=>{const xs=by[d].sort((a,b)=>a.at<b.at?-1:1),real=xs.filter(x=>!x.fix);if(!real.length)return null;
+    const pl=r2(real.reduce((s,x)=>s+plOf(x),0)),firsts={};real.forEach(x=>{if(!(x.acc in firsts))firsts[x.acc]=x.before});
+    const base=Object.values(firsts).reduce((s,v)=>s+v,0),close=r2(ids.reduce((s,aid)=>{const k=valsOf(aid).filter(x=>x.iso<=d).pop();return s+(k?k.v:0)},0));
+    const lk=lockedIn(d,d,id==='all'?null:id);
+    return {d,pl,pct:base>0?pl/base*100:null,close,base,lk,accs:[...new Set(real.map(x=>x.acc))]}}).filter(Boolean)}
+function pnlSum(days,from,to){const ds=days.filter(x=>x.d>=from&&x.d<=to),pl=r2(ds.reduce((s,x)=>s+x.pl,0)),base=ds.length?ds[0].base:0;return {pl,n:ds.length,pct:base>0?pl/base*100:null}}
+function pnlBars(days,sel){const D=days.slice(-30);if(!D.length)return '';const W=320,H=96,mid=H/2,mx=Math.max(...D.map(x=>Math.abs(x.pl)),1),bw=Math.min(22,W/D.length*.66),gap=W/D.length;
+  return `<div class="pnl-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Profit or loss each day, last ${D.length} updates">
+  <line x1="0" x2="${W}" y1="${mid}" y2="${mid}" class="pnl-axis"/>
+  ${D.map((x,i)=>{const h=Math.max(3,Math.abs(x.pl)/mx*(mid-6)),cx=i*gap+gap/2,y=x.pl>=0?mid-h:mid;return `<rect class="pnl-bar ${x.pl>=0?'up':'dn'}${sel===x.d?' sel':''}" data-act="pnlPick" data-d="${x.d}" x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4,bw/3).toFixed(1)}" style="--i:${i}"><title>${fmtDs(x.d)} ${sm(x.pl)}</title></rect>`}).join('')}
+  </svg><div class="pnl-axislbl"><span>${fmtDs(D[0].d)}</span><span>Tap a bar</span><span>${fmtDs(D[D.length-1].d)}</span></div></div>`}
+function pnlRow(x){return `<button type="button" class="row pnl-row${pnlSel===x.d?' sel':''}" data-act="pnlPick" data-d="${x.d}"><span class="pnl-dot ${x.pl>=0?'up':'dn'}">${x.pl>=0?'▲':'▼'}</span><div class="main"><div class="t">${wd3(x.d)} ${fmtDs(x.d)}</div><div class="s">Value ${money(x.close)}${x.lk?` · sells locked ${sm(x.lk)}`:''}${x.accs.length>1||(pnlAcc||'all')==='all'&&invAccs().length>1?' · '+x.accs.map(a=>esc(accName(a))).join(', '):''}</div></div><div class="amt ${x.pl>=0?'pos':'neg'}">${sm(x.pl)}<br><small>${x.pct!=null?pctS(x.pct):''}</small></div></button>`}
+function pnlBlock(id,full,still){const days=pnlDays(id),today=todayISO();
+  if(!days.length)return `<div class="pnl-empty">${ic('chart')}<b>No daily values yet</b><span>Update the value after the market closes each day. Each update shows here as that day's profit or loss.</span></div>`;
+  const last=days[days.length-1],prev=days[days.length-2],w7=pnlSum(days,addDays(today,-6),today),w30=pnlSum(days,addDays(today,-29),today),R=days.filter(x=>x.d>=addDays(today,-29));
+  const up=R.filter(x=>x.pl>0).length,dn=R.filter(x=>x.pl<0).length,best=R.length?R.reduce((m,x)=>x.pl>m.pl?x:m):null,worst=R.length?R.reduce((m,x)=>x.pl<m.pl?x:m):null,avg=R.length?r2(w30.pl/R.length):0;
+  const sel=days.find(x=>x.d===pnlSel)||last;
+  const tile=(l,v,p,sub)=>`<div class="pnl-tile ${v>=0?'up':'dn'}"><span>${l}</span><b>${sm(v)}</b><em>${p!=null?pctS(p):''}${sub?' · '+sub:''}</em></div>`;
+  const list=days.slice().reverse().filter(x=>x.d>=addDays(today,-29)),shown=full||pnlAll?list:list.slice(0,7);
+  return `<div class="pnl${still?' still':''}" data-acc="${esc(id||'all')}">
+  <div class="pnl-tiles">${tile(last.d===today?'Today':wd3(last.d)+' '+fmtDs(last.d),last.pl,last.pct)}${prev?tile('Day before · '+fmtDs(prev.d),prev.pl,prev.pct):''}${tile('Last 7 days',w7.pl,w7.pct,w7.n+' day'+(w7.n===1?'':'s'))}${tile('Last 30 days',w30.pl,w30.pct,w30.n+' day'+(w30.n===1?'':'s'))}</div>
+  ${pnlBars(days,sel.d)}
+  <div class="pnl-pick ${sel.pl>=0?'up':'dn'}"><b>${fmtD(sel.d)}</b><span>${sel.pl>=0?'Profit':'Loss'} <b>${sm(sel.pl)}</b>${sel.pct!=null?' ('+pctS(sel.pct)+')':''} · closed at ${money(sel.close)}</span></div>
+  <div class="pnl-stats"><span><i class="up"></i>${up} up day${up===1?'':'s'}</span><span><i class="dn"></i>${dn} down day${dn===1?'':'s'}</span><span>Avg ${sm(avg)}/day</span>${best&&best.pl>0?`<span>Best ${sm(best.pl)} ${fmtDs(best.d)}</span>`:''}${worst&&worst.pl<0?`<span>Worst ${sm(worst.pl)} ${fmtDs(worst.d)}</span>`:''}</div>
+  <span class="label" style="display:block;margin-top:4px">Every day · last 30 days</span>
+  <div class="list pnl-list">${shown.map(pnlRow).join('')||'<div class="empty">No updates in the last 30 days.</div>'}</div>
+  ${!full&&list.length>7?`<button type="button" class="btn sm wide" data-act="pnlMore">${pnlAll?'Show less':'Show all '+list.length+' days'}</button>`:''}
+  </div>`}
+function pnlSheet(id){if(id)pnlAcc=id;const A=invAccs();if(!A.length){toast('Add an investment account first');return}if(pnlAcc!=='all'&&!A.some(a=>a.id===pnlAcc))pnlAcc='all';
+  sheet(`<h2>Daily profit &amp; loss</h2><div class="sub">From your daily value updates. Money moved in or out is not profit.</div>
+  ${A.length>1?`<div class="seg" style="margin-bottom:12px"><button type="button" data-act="pnlAcc" data-v="all" class="${pnlAcc==='all'?'on':''}">All</button>${A.map(a=>`<button type="button" data-act="pnlAcc" data-v="${esc(a.id)}" class="${pnlAcc===a.id?'on':''}">${esc(a.name.replace(/ shares$/i,''))}</button>`).join('')}</div>`:''}
+  <div id="pnlbox">${pnlBlock(pnlAcc,true)}</div>
+  <div class="btns" style="margin-top:12px"><button class="btn" data-act="close">Close</button><button class="btn pri" style="flex:1" data-act="invUpd" data-id="${pnlAcc==='all'?'':esc(pnlAcc)}">${ic('pencil')} Update values</button></div>`);}
+function pnlHomeCard(){const A=invAccs();if(!A.length)return '';const days=pnlDays('all'),today=todayISO();
+  const last=days[days.length-1],w30=pnlSum(days,addDays(today,-29),today),D=days.slice(-14),mx=Math.max(...D.map(x=>Math.abs(x.pl)),1);
+  return `<button type="button" class="pnl-home" data-act="pnlOpen"><div class="ph-top"><span class="ph-ic">${ic('chart')}</span><div><b>Investments · daily profit &amp; loss</b><span>${last?`${last.d===today?'Today':wd3(last.d)+' '+fmtDs(last.d)}: <b class="${last.pl>=0?'pos':'neg'}">${sm(last.pl)}</b>${last.pct!=null?' '+pctS(last.pct):''}`:'Update a value to start'}</span></div><em>›</em></div>
+  ${D.length?`<div class="ph-bars">${D.map((x,i)=>`<i class="${x.pl>=0?'up':'dn'}" style="--h:${Math.max(8,Math.abs(x.pl)/mx*100).toFixed(0)}%;--i:${i}"></i>`).join('')}</div>`:''}
+  <div class="ph-foot"><span>Last 30 days</span><b class="${w30.pl>=0?'pos':'neg'}">${sm(w30.pl)}</b><span>${w30.pct!=null?pctS(w30.pct):''} · ${w30.n} update${w30.n===1?'':'s'}</span></div></button>`}
+document.addEventListener('click',ev=>{const el=ev.target.closest('[data-act="pnlPick"],[data-act="pnlMore"],[data-act="pnlAcc"],[data-act="pnlOpen"],[data-act="pnlOpenOne"]');if(!el)return;ev.stopPropagation();const k=el.dataset.act;
+  if(k==='pnlOpen'){pnlSel=null;pnlSheet('all');return}if(k==='pnlOpenOne'){pnlSel=null;pnlSheet(el.dataset.id);return}
+  if(k==='pnlAcc'){pnlAcc=el.dataset.v;pnlSel=null;pnlSheet();return}
+  if(k==='pnlPick')pnlSel=el.dataset.d;if(k==='pnlMore')pnlAll=!pnlAll;
+  const box=el.closest('.pnl');if(!box)return;const full=!!el.closest('#pnlbox');box.outerHTML=pnlBlock(box.dataset.acc,full,true)},true);
+
 </script>
 
 </body></html>
